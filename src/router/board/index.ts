@@ -1,14 +1,7 @@
 import { Router } from 'express';
 //import { getPostList, getPostDetail, getUserPostList } from '.';
-import list from '../search';
-
+//board에서 라우팅을 해준다면 어떤걸 해줘야할까.... 굳이 라우팅이 필요없을지도
 const router: Router = Router();
 
-//router.get('/list', getPostList);
-router.use('/list', list)
-
-//router.get('/list/user/:userId', getUserPostList);
-//제목으로 검색하는 부분
-//router.get('/post/:postId', getPostDetail);
 
 export default router;

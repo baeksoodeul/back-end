@@ -1,19 +1,30 @@
 import express from 'express';
 import errorHandler from './lib/errorHandler';
+import { logger, loggerStream } from './lib/logger';
 import morgan from 'morgan';
+import cors from 'cors';
 import path from 'path';
 import "reflect-metadata";
+import './env';
 
 import { ConnectionOptions, createConnection } from 'typeorm';
 
+const {
+    NODE_ENV,
+    DB_HOST,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    DB_PORT
+} = process.env;
 
 const connectOptions: ConnectionOptions = {
     type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "test",
-    password: "test",
-    database: "test",
+    host: DB_HOST,//"localhost",
+    port: parseInt(DB_PORT as string, 10),//3306,
+    username: DB_USER,//"test",
+    password: DB_PASSWORD,//"test",
+    database: DB_NAME,//"test",
     synchronize: true,
     logging: true,
     entities: [
@@ -33,17 +44,18 @@ const dbInit = async () => {
 
 
 const app: express.Application = express();
+const morganEnv = NODE_ENV !== 'production' ? 'dev' : 'combined';
 
-app.set('port', process.env.PORT || 3000);
-
-
-app.use(morgan('dev'));
-app.use('/', express.static(path.join(__dirname + 'public')));
-app.use(express.json());
-app.use(express.urlencoded({extended : false}));
+app.set('port', 3000);
+app.use(cors());//cors
+app.use(morgan(morganEnv, {stream: loggerStream}));//log
+app.use('/', express.static(path.join(__dirname + 'public')));//static file
+app.use(express.json());//json 인식(?)
+app.use(express.urlencoded({extended : false})); //url encoding
 
 //controller
 app.use(errorHandler);
+
 //db연동
 dbInit();
 

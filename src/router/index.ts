@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import board from './board';
-import user from './profile';
+import user from './user';
 import post from './post';
 
 const router = Router();
