@@ -11,7 +11,10 @@ class Post extends BaseEntity {
     u_id!: User;
 
     @Column()
-    post!: string;
+    title!: string;
+
+    @Column()
+    content!: string;
 
     @Column()
     lookUp!: number;
@@ -22,6 +25,14 @@ class Post extends BaseEntity {
     @CreateDateColumn()
     writtenDate!: Date;
 
+    @Column()
+    site!: string[];
+
+    @Column()
+    tag!: string[];
+
+    @Column()
+    enabled!: boolean;
     //이미지를 어떻게 넣을지도 생각해야함
     //url을 넘긴다...? 그 많은 url들을 어떻게... string으로 넘겨야 하나..?
 
