@@ -6,7 +6,7 @@ class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     p_id!: number;
 
-    @ManyToOne(type => User, {nullable: false})
+    @ManyToOne(type => User, { onDelete: 'CASCADE', nullable: false })
     @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
     u_id!: User;
 

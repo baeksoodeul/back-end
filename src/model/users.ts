@@ -28,7 +28,7 @@ class User extends BaseEntity {
     sex!: string;
 
     @Column("simple-array")
-    site!: string[];
+    sites!: string[];
     //선호 여행지는 몽고디비로 하는게 더 좋지않을까
 
     @Column()

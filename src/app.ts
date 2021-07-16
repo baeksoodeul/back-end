@@ -1,13 +1,13 @@
 import express from 'express';
 import errorHandler from './lib/errorHandler';
 import { logger, loggerStream } from './lib/logger';
+import { ConnectionOptions, createConnection } from 'typeorm';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
 import "reflect-metadata";
 import './env';
-
-import { ConnectionOptions, createConnection } from 'typeorm';
+import router from './routes'; 
 
 const {
     NODE_ENV,
@@ -54,6 +54,7 @@ app.use(express.json());//json 인식(?)
 app.use(express.urlencoded({extended : false})); //url encoding
 
 //controller
+app.use(router);
 app.use(errorHandler);
 
 //db연동

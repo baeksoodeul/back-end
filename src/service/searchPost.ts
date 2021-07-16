@@ -1,9 +1,9 @@
-import { RequestHandler } from 'express';
-import { Like } from 'typeorm';
 import joi from 'joi';
 
 import Post from '../model/posts';
 import User from '../model/users';
+
+import { searchPostData } from '../types/post';
 
 //일단 게시글 정렬은 최신순으로
 //함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
@@ -57,21 +57,21 @@ import User from '../model/users';
 
 }*/
 
-export const searchByDate: RequestHandler = async (req, res, next) => {
+export const searchByDate= async () => {
 
 }
 
-export const searchByTag: RequestHandler = async (req, res, next) => {
+export const searchByTag = async () => {
 
 }
 
-export const searchBySite: RequestHandler = async (req, res, next) => {
+export const searchBySite= async () => {
     
 }
 
-export const searchByText: RequestHandler = async (req, res, next) => {
-    let searchText: string = req.params.searchText;
-    const searchType: string = req.params.searchType; //joi 적용해보는거 괜찮을듯
+export const searchByText = async (data: searchPostData) => {
+    let searchText: string = data.searchText;
+    const searchType: string = data.searchType; //joi 적용해보는거 괜찮을듯
 
     let condition: string;
 
@@ -108,9 +108,10 @@ export const searchByText: RequestHandler = async (req, res, next) => {
             .orderBy('post.writtenDate', 'DESC')//default
             .getMany();
 
-        res.status(201).json(postList);
+        return postList;
     }
     catch(err) {
-        next(err);
+        //console.error(err);
+        //throw new err;
     }
 }
