@@ -101,8 +101,8 @@ export const searchByText = async (data: searchPostData) => {
     try {
         const postList = await Post
             .createQueryBuilder('post')
-            .leftJoin('post.u_id', 'user')
-            .select(['post.p_id', 'post.title', 'post.lookUp', 'post.recommendation', 'post.writtenDate', 'user.u_id', 'user.nickName'])
+            .leftJoin('post.user', 'user')
+            .select(['post.p_id', 'post.title', 'post.lookUp', 'post.recommendation', 'post.writtenDate', 'post.site', 'post.tag', 'user.u_id', 'user.nickName'])
             .where(condition, { text: searchText} )
             .andWhere('post.enabled: true')
             .orderBy('post.writtenDate', 'DESC')//default

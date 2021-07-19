@@ -11,9 +11,9 @@ export const getPostList = async () => {
     try {
         const postList = await Post
             .createQueryBuilder('post')
-            .leftJoin('post.u_id', 'user')
+            .leftJoin('post.user', 'user')
             .select(['post', 'user.nickName'])
-            .where('enabled = true')
+            .where('post.enabled = true')
             .getMany();
 
         return postList;
