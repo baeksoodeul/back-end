@@ -8,7 +8,7 @@ class Post extends BaseEntity {
 
     @ManyToOne(type => User, { onDelete: 'CASCADE', nullable: false })
     @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
-    u_id!: User;
+    user!: User;
 
     @Column()
     title!: string;

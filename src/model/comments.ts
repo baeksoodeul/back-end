@@ -10,16 +10,20 @@ class Comment extends BaseEntity {
 
     @ManyToOne(type => User, { onDelete: 'CASCADE', nullable: false})
     @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
-    u_id!: User;
+    user!: User;
 
     @ManyToOne(type => Post, { onDelete: 'CASCADE', nullable: false})
     @JoinColumn({name: 'p_id', referencedColumnName: 'p_id'})
-    p_id!: Post;
+    post!: Post;
 
     @Column()
     recommendation!: number;
 
+
     //답글 기능
+
+    @Column()
+    enabled!: boolean;
 
     @CreateDateColumn()
     writtenDate!: Date;

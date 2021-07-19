@@ -5,13 +5,13 @@ import User from '../model/users';
 import { newUser, existingUser } from '../types/user';
 
 //리스트에서 넘어가는 방식.... 리스트에서 값을 프런트로 넘길 수 있다면? 굳이 select를 해줄 필요가 있을까...
-export const getPostDetail = async (data: string) => {
-    const postId = data;
+export const getPostDetail = async (data: number) => {
+    const postId: number = data;
 
     try {
         const postDetail = await Post
             .createQueryBuilder('post')
-            .leftJoin('post.u_id', 'user')
+            .leftJoin('post.user', 'user')
             .select(['post' , 'user.nickName'])
             .where('post.p_id = :id', { id: postId })
             .getOne();
@@ -27,7 +27,7 @@ export const getPostDetail = async (data: string) => {
 }
 
 //존나 위험하지 않을까....
-export const getUserDetail = async (data: string, admin: boolean) => {
+export const getUserDetail = async (data: number, admin: boolean) => {
     const userId = data;
     let selectArr: Array<string>;
     if(admin) {
@@ -54,6 +54,7 @@ export const getUserDetail = async (data: string, admin: boolean) => {
     }
 }
 
+//create, update, delete
 export const createUser = async (user: newUser) => {
     const { id, pwd, nick, fName, lName, age, sex, sites, intro } = user;
 
@@ -83,7 +84,7 @@ export const createUser = async (user: newUser) => {
     }
 }
 
-export const updateUser = async (data: string, user: existingUser) => {
+export const updateUser = async (data: number, user: existingUser) => {
     const { pwd, nick, fName, lName, age, sex, sites, intro } = user;
     const userId = data;
 
@@ -112,7 +113,7 @@ export const updateUser = async (data: string, user: existingUser) => {
     }
 }
 
-export const deleteUser = async (data: string) => {
+export const deleteUser = async (data: number) => {
     const userId = data;
 
     try {
