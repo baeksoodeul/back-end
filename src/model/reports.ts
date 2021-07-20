@@ -41,7 +41,7 @@ class Report extends BaseEntity {
     @Column()
     reportedDate!: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     managedDate!: string | null;
 
     @BeforeInsert()

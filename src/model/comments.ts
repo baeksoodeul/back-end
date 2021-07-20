@@ -1,6 +1,8 @@
-import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+
 import User from './users';
 import Post from './posts';
+import { dateFormatter } from '../lib/formatter';
 
 
 @Entity()
@@ -22,11 +24,25 @@ class Comment extends BaseEntity {
 
     //답글 기능
 
-    @Column()
+    @Column({ default: true })
     enabled!: boolean;
 
-    @CreateDateColumn()
-    writtenDate!: Date;
+    @Column()
+    writtenDate!: string;
+
+    @Column()
+    updatedDate!: string | null;
+
+    @BeforeInsert()
+    setWrittenDate() {
+        this.writtenDate = dateFormatter(new Date());
+        this.updatedDate = null;
+    }
+
+    @BeforeUpdate()
+    setUpdatedDate() {
+        this.updatedDate = dateFormatter(new Date());
+    }
 }
 
 export default Comment;
