@@ -51,7 +51,7 @@ export const getReportDetail = async (data: number) => {
 }
 
 //user 기능 - 신고 작성
-export const makeReport = async (data: newReport) => {
+export const createReport = async (data: newReport) => {
     const { user, type, object, ctg, rs } = data;
     let val = {};
 
@@ -98,22 +98,22 @@ export const makeReport = async (data: newReport) => {
 }
 
 //admin 기능 - 신고 처리 및 신고 답변 작성(?)
-export const manageReport = async (data: number) => {
+export const updateReport = async (data: number) => {
     const reportId: number = data;
-    const mdate: string = dateFormatter(new Date());
+    const udate: string = dateFormatter(new Date());
 
     try {
-        const mReport: UpdateResult = await Report
+        const uReport: UpdateResult = await Report
             .createQueryBuilder()
             .update(Report)
             .set({
                 infliction: true,
-                managedDate: mdate
+                managedDate: udate
             })
             .where('report.r_id = :id', { id: reportId })
             .execute();
 
-        return mReport
+        return uReport
     }
     catch(err) {
         //console.error(err);

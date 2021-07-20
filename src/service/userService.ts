@@ -5,30 +5,13 @@ import User from '../model/users';
 import { newUser, existingUser } from '../types/user';
 
 //리스트에서 넘어가는 방식.... 리스트에서 값을 프런트로 넘길 수 있다면? 굳이 select를 해줄 필요가 있을까...
-export const getPostDetail = async (data: number) => {
-    const postId: number = data;
-
-    try {
-        const postDetail = await Post
-            .createQueryBuilder('post')
-            .leftJoin('post.user', 'user')
-            .select(['post' , 'user.nickName'])
-            .where('post.p_id = :id', { id: postId })
-            .getOne();
-        
-        if(!postDetail) throw new Error('NOT_FOUND');
-
-        return postDetail;
-    }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
-    }
+export const getUserList = async () => {
+    
 }
 
 //존나 위험하지 않을까....
 export const getUserDetail = async (data: number, admin: boolean) => {
-    const userId = data;
+    const userId: number = data;
     let selectArr: Array<string>;
     if(admin) {
         selectArr = ['user'];
@@ -56,7 +39,7 @@ export const getUserDetail = async (data: number, admin: boolean) => {
 
 //create, update, delete
 export const createUser = async (user: newUser) => {
-    const { id, pwd, nick, fName, lName, age, sex, sites, intro } = user;
+    const { id, pwd, nick, fName, lName, age, sex, sites, intro }: newUser = user;
 
     try{
         const iUser: InsertResult = await User
@@ -85,8 +68,8 @@ export const createUser = async (user: newUser) => {
 }
 
 export const updateUser = async (data: number, user: existingUser) => {
-    const { pwd, nick, fName, lName, age, sex, sites, intro } = user;
-    const userId = data;
+    const userId: number = data;
+    const { pwd, nick, fName, lName, age, sex, sites, intro }: existingUser = user;
 
     try {
         const uUser: UpdateResult = await User
@@ -114,7 +97,7 @@ export const updateUser = async (data: number, user: existingUser) => {
 }
 
 export const deleteUser = async (data: number) => {
-    const userId = data;
+    const userId: number = data;
 
     try {
         const dUser: DeleteResult = await User

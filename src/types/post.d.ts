@@ -1,4 +1,13 @@
 export interface searchPostData {
-    searchType: string,
-    searchText: string
+    type: string,
+    text: string
+}
+
+export interface newPost extends existingPost {
+    user: User
+}
+
+export interface existingPost {
+    title: string,
+    ctnt: string,
 }

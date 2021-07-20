@@ -1,5 +1,8 @@
-import { PrimaryGeneratedColumn, Column, BaseEntity, Entity, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, BaseEntity, Entity, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+
 import User from './users';
+import { dateFormatter } from '../lib/formatter';
+import { truncate } from 'fs';
 
 @Entity()
 class Post extends BaseEntity {
@@ -7,7 +10,7 @@ class Post extends BaseEntity {
     p_id!: number;
 
     @ManyToOne(type => User, { onDelete: 'CASCADE', nullable: false })
-    @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
+    @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
     @Column()
@@ -16,14 +19,11 @@ class Post extends BaseEntity {
     @Column()
     content!: string;
 
-    @Column()
+    @Column({ default: 0 })
     lookUp!: number;
 
-    @Column()
+    @Column({ default: 0 })
     recommendation!: number;
-
-    @CreateDateColumn()
-    writtenDate!: Date;
 
     @Column()
     site!: string[];
@@ -31,15 +31,25 @@ class Post extends BaseEntity {
     @Column()
     tag!: string[];
 
-    @Column()
+    @Column({ default: true })
     enabled!: boolean;
-    //이미지를 어떻게 넣을지도 생각해야함
-    //url을 넘긴다...? 그 많은 url들을 어떻게... string으로 넘겨야 하나..?
 
-    /*
-    @Column('sijmple-array')
-    images!: string[];
-    */
+    @Column()
+    writtenDate!: string;
+
+    @Column({ nullable: true })
+    updatedDate!: string | null;
+
+    @BeforeInsert()
+    setWrittenDate() {
+        this.writtenDate = dateFormatter(new Date());
+        this.updatedDate = null;
+    }
+
+    @BeforeUpdate()
+    setUpdatedDate() {
+        this.updatedDate = dateFormatter(new Date());
+    }
 }
 
 export default Post;
