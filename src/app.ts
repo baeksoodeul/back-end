@@ -2,6 +2,7 @@ import express from 'express';
 import errorHandler from './lib/errorHandler';
 import { logger, loggerStream } from './lib/logger';
 import { ConnectionOptions, createConnection } from 'typeorm';
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
@@ -48,6 +49,7 @@ const morganEnv = NODE_ENV !== 'production' ? 'dev' : 'combined';
 
 app.set('port', 3000);
 app.use(cors());//cors
+app.use(cookieParser());//쿠키파서
 app.use(morgan(morganEnv, {stream: loggerStream}));//log
 app.use('/', express.static(path.join(__dirname + 'public')));//static file
 app.use(express.json());//json 인식(?)

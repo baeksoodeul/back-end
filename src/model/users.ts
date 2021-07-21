@@ -14,6 +14,10 @@ class User extends BaseEntity {
     @Column({ comment: '비밀번호' })
     password!: string;
 
+    @Column({ comment: 'salt' })
+    salt!: string;
+
+    //이름이랑 성 배열 하나로 합치는것도 괜찮을듯
     @Column({ comment: '이름' })
     firstName!: string;
 
@@ -28,6 +32,12 @@ class User extends BaseEntity {
 
     @Column({ comment: '성별' })
     sex!: string;
+
+    @Column({ comment: '전화번호' }) //ex: LGU010XXXXXXXX
+    phone!: string;
+
+    @Column({ comment: '이메일' })
+    email!: string;
 
     @Column("simple-array")
     sites!: string[];
