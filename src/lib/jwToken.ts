@@ -6,11 +6,10 @@ import { findUserByToken } from '../service/userService';
 const secretkey = 'azbxcydwev';//config에 집어넣을 내용, + option까지
 
 //토큰 생성
-export const generateToken = (id: number, user: string, nick: string) => {
+export const generateToken = (id: number, user: string) => {
     const data = {
         u_id: id,
-        username: user,
-        nickname: nick
+        username: user
     }
     
     try {

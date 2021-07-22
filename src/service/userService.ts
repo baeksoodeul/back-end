@@ -12,7 +12,7 @@ export const findUserById = async (data: string) => {
     try {//select 결과가 없으면 빈 값이 날아가겠지. 이건 위에서 잡아주면 될듯, 여기에 닉네임이 필요할까?
         const fUser: User | undefined = await User
             .createQueryBuilder('user')
-            .select(['user.u_id', 'user.userName', 'user.password', 'user.nickName', 'user.salt'])
+            .select(['user.u_id', 'user.userName', 'user.password', 'user.salt'])
             .where('user.username = :id', { id: userName })
             .getOne();
 
@@ -75,8 +75,8 @@ export const getUserDetail = async (data: number, admin: boolean) => {
 }
 
 //create, update, delete
-export const createUser = async (user: newUser) => {
-    const { id, pwd, salt, nick, fName, lName, age, sex, mail, ph, sites, intro }: newUser = user;
+export const insertUser = async (user: newUser) => {
+    const { id, pwd, salt, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: newUser = user;
 
     try{
         const iUser: InsertResult = await User
@@ -90,26 +90,27 @@ export const createUser = async (user: newUser) => {
                 nickName: nick,
                 firstName: fName,
                 lastName: lName,
-                age: age,
-                sex: sex,
-                email: mail,
-                phone: ph,
+                //age: age,
+                //sex: sex,
+                //email: mail,
+                //phone: ph,
                 sites: sites,
                 introduction: intro
             })
             .execute();
         
-        return iUser;
+        console.log(iUser);
+        return findUserById(id);
     }
     catch(err) {
         //console.error(err);
-        //throw new err;
+        throw new err;
     }
 }
 
 export const updateUser = async (data: number, user: existingUser) => {
     const userId: number = data;
-    const { pwd, nick, fName, lName, age, sex, mail, ph, sites, intro }: existingUser = user;
+    const { pwd, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: existingUser = user;
 
     try {
         const uUser: UpdateResult = await User
@@ -120,10 +121,10 @@ export const updateUser = async (data: number, user: existingUser) => {
                 nickName: nick,
                 firstName: fName,
                 lastName: lName,
-                age: age,
-                sex: sex,
-                email: mail,
-                phone: ph,
+                //age: age,
+                //sex: sex,
+                //email: mail,
+                //phone: ph,
                 sites: sites,
                 introduction: intro
             })

@@ -56,7 +56,7 @@ app.use(express.json());//json 인식(?)
 app.use(express.urlencoded({extended : false})); //url encoding
 
 //controller
-app.use(router);
+app.use('/api', router);
 app.use(errorHandler);
 
 //db연동

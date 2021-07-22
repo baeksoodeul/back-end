@@ -15,6 +15,7 @@ export const createSalt = async () => {
     }
 }
 
+//signup
 export const createHashedPassword = async (pwd: string) => {
     try {
         const salt: string = await createSalt();
@@ -24,14 +25,15 @@ export const createHashedPassword = async (pwd: string) => {
             throw new Error("HASHING_ERROR");
         }
 
-        return { hasehd: hashed.toString('base64'), salt: salt}
+        return { hashed: hashed.toString('base64'), salt: salt }
     }
     catch(err) {
         throw new err;
     }
 }
 
-export const makeHashedPassword = async (pwd: string, salt: string) => {
+//login
+export const useHashedPassword = async (pwd: string, salt: string) => {
     try {
         const hashed: Buffer = await crypto.pbkdf2Sync(pwd, salt, 9999, 64, 'sha512');
 
@@ -48,7 +50,7 @@ export const makeHashedPassword = async (pwd: string, salt: string) => {
 
 export const comparePassword = async (pwd: string, salt: string, hashed: string) => {
     try {
-        const inputHashed = await makeHashedPassword(pwd, salt);
+        const inputHashed = await useHashedPassword(pwd, salt);
 
         if(inputHashed === hashed) {
             return true;

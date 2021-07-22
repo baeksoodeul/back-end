@@ -27,22 +27,23 @@ class User extends BaseEntity {
     @Column({ length: 12, unique: true, comment: '닉네임' })
     nickName!: string;
 
-    @Column({ comment: '나이' })
-    age!: number;
+    //@Column({ comment: '나이' })
+    //age!: number;
 
-    @Column({ comment: '성별' })
-    sex!: string;
+    //@Column({ comment: '성별' })
+    //sex!: string;
 
-    @Column({ comment: '전화번호' }) //ex: LGU010XXXXXXXX
-    phone!: string;
+    //@Column({ comment: '전화번호' }) //ex: LGU010XXXXXXXX
+    //phone!: string;
 
-    @Column({ comment: '이메일' })
-    email!: string;
+    //@Column({ comment: '이메일' })
+    //email!: string;
 
     @Column("simple-array")
     sites!: string[];
     //선호 여행지는 몽고디비로 하는게 더 좋지않을까
 
+    //어드민 구별하는 것도 생각해야함. isAdmin
     @Column({ default: "", comment: '자기소개' })
     introduction!: string;
 
