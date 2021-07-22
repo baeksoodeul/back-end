@@ -74,7 +74,9 @@ export const getUserDetail = async (data: number, admin: boolean) => {
     }
 }
 
-//create, update, delete
+//insert, update, delete
+//아이디, 닉네임 중복 검사를 만들면 되지 않을까...
+//회원가입, 해당 계정이 있는지부터 체크해야함.
 export const insertUser = async (user: newUser) => {
     const { id, pwd, salt, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: newUser = user;
 
@@ -107,7 +109,7 @@ export const insertUser = async (user: newUser) => {
         throw new err;
     }
 }
-
+//해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?
 export const updateUser = async (data: number, user: existingUser) => {
     const userId: number = data;
     const { pwd, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: existingUser = user;
@@ -139,6 +141,7 @@ export const updateUser = async (data: number, user: existingUser) => {
     }
 }
 
+//이것도 auth 거쳐야함.
 export const deleteUser = async (data: number) => {
     const userId: number = data;
 
