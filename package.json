@@ -35,7 +35,6 @@
     "ts-node": "^10.0.0",
     "typeorm": "^0.3.0-alpha.24",
     "types": "file:../../../jsonwebtoken",
-    "typescript": "^4.3.4",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   },
@@ -43,7 +42,26 @@
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
     "@types/morgan": "^1.9.2",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.1.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5",
     "webpack": "^5.41.1",
     "webpack-cli": "^4.7.2"
+  },
+
+  "lint-staged": {
+    "*.js": "eslint --fix && prettier --write"
+  },
+  
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

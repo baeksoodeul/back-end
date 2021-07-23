@@ -1,12 +1,12 @@
-import { decode, Jwt, JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
-import Post from '../model/posts';
+//import Post from '../model/posts';
 import User from '../model/users';
 import { newUser, existingUser } from '../types/user';
 
 //username
-export const findUserById = async (data: string) => {
+export const findUserById = async (data: string): Promise<User | undefined> => {
     const userName = data;
 
     try {//select 결과가 없으면 빈 값이 날아가겠지. 이건 위에서 잡아주면 될듯, 여기에 닉네임이 필요할까?
@@ -23,7 +23,7 @@ export const findUserById = async (data: string) => {
     }
 }
 //decoded 타입은 나중에 다시 생각
-export const findUserByToken = async (decoded: JwtPayload | undefined) => {
+export const findUserByToken = async (decoded: JwtPayload | undefined): Promise<User | undefined> => {
     const tokenData: JwtPayload = decoded as JwtPayload;
 
     try {
@@ -42,12 +42,12 @@ export const findUserByToken = async (decoded: JwtPayload | undefined) => {
 }
 
 //리스트에서 넘어가는 방식.... 리스트에서 값을 프런트로 넘길 수 있다면? 굳이 select를 해줄 필요가 있을까...
-export const getUserList = async () => {
+// export const getUserList = async () => {
 
-}
+// }
 
 //존나 위험하지 않을까....
-export const getUserDetail = async (data: number, admin: boolean) => {
+export const getUserDetail = async (data: number, admin: boolean): Promise<User | undefined> => {
     const userId: number = data;
     let selectArr: Array<string>;
     if(admin) {
@@ -77,7 +77,7 @@ export const getUserDetail = async (data: number, admin: boolean) => {
 //insert, update, delete
 //아이디, 닉네임 중복 검사를 만들면 되지 않을까...
 //회원가입, 해당 계정이 있는지부터 체크해야함.
-export const insertUser = async (user: newUser) => {
+export const insertUser = async (user: newUser): Promise<User | undefined> => {
     const { id, pwd, salt, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: newUser = user;
 
     try{
@@ -110,7 +110,7 @@ export const insertUser = async (user: newUser) => {
     }
 }
 //해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?
-export const updateUser = async (data: number, user: existingUser) => {
+export const updateUser = async (data: number, user: existingUser): Promise<UpdateResult | undefined> => {
     const userId: number = data;
     const { pwd, nick, fName, lName, /*age, sex, mail, ph,*/ sites, intro }: existingUser = user;
 
@@ -142,7 +142,7 @@ export const updateUser = async (data: number, user: existingUser) => {
 }
 
 //이것도 auth 거쳐야함.
-export const deleteUser = async (data: number) => {
+export const deleteUser = async (data: number): Promise<DeleteResult | undefined> => {
     const userId: number = data;
 
     try {

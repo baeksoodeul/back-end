@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, ManyToOne, JoinColumn, CreateDateColumn, BeforeInsert, BeforeUpdate, AfterInsert } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate, AfterInsert } from 'typeorm';
 import User from './users';
 import Post from './posts';
 import Comment from './comments';

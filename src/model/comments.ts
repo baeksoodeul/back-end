@@ -1,4 +1,4 @@
-import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, CreateDateColumn, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
 
 import User from './users';
 import Post from './posts';
@@ -10,11 +10,11 @@ class Comment extends BaseEntity {
     @PrimaryGeneratedColumn()
     c_id!: number;
 
-    @ManyToOne(type => User, { onDelete: 'CASCADE', nullable: false})
+    @ManyToOne(() => User, { onDelete: 'CASCADE', nullable: false})
     @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
     user!: User;
 
-    @ManyToOne(type => Post, { onDelete: 'CASCADE', nullable: false})
+    @ManyToOne(() => Post, { onDelete: 'CASCADE', nullable: false})
     @JoinColumn({name: 'p_id', referencedColumnName: 'p_id'})
     post!: Post;
 
@@ -34,13 +34,13 @@ class Comment extends BaseEntity {
     updatedDate!: string | null;
 
     @BeforeInsert()
-    setWrittenDate() {
+    setWrittenDate(): void {
         this.writtenDate = dateFormatter(new Date());
         this.updatedDate = null;
     }
 
     @BeforeUpdate()
-    setUpdatedDate() {
+    setUpdatedDate(): void {
         this.updatedDate = dateFormatter(new Date());
     }
 }
