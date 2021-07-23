@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.ts",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint ."
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -22,6 +24,7 @@
     "crypto": "^1.0.1",
     "date-utils": "^1.2.21",
     "dotenv": "^10.0.0",
+    "eslint-config-airbnb": "^18.2.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "joi": "^17.4.0",
@@ -53,11 +56,5 @@
     "typescript": "^4.3.5",
     "webpack": "^5.41.1",
     "webpack-cli": "^4.7.2"
-  },
-
-  "husky": {
-    "hooks": {
-      "pre-commit": "echo \"커밋 전에 출력 됨.\""
-    }
   }
 }
