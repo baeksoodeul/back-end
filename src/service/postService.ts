@@ -9,7 +9,7 @@ import { existingPost, newPost, searchPostData } from '../types/post';
 //일단 게시글 정렬은 최신순으로
 //함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
 
-export const getPostList = async () => {
+export const getPostList = async (): Promise<Post[] | undefined> => {
     try {
         const postList = await Post
             .createQueryBuilder('post')

@@ -55,8 +55,6 @@
     "webpack-cli": "^4.7.2"
   },
 
-  
-
   "husky": {
     "hooks": {
       "pre-commit": "echo \"커밋 전에 출력 됨.\""
