@@ -55,14 +55,11 @@
     "webpack-cli": "^4.7.2"
   },
 
-  "lint-staged": {
-    "*.js": "eslint --fix && prettier --write"
-  },
+  
 
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "post-commit": "echo 'husky is live'"
+      "pre-commit": "echo \"커밋 전에 출력 됨.\""
     }
   }
 }
