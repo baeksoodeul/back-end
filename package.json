@@ -58,10 +58,11 @@
   "lint-staged": {
     "*.js": "eslint --fix && prettier --write"
   },
-  
+
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "post-commit": "echo 'husky is live'"
     }
   }
 }
