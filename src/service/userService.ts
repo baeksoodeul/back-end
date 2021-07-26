@@ -12,12 +12,7 @@ export const findUserById = async (data: string): Promise<User | undefined> => {
     try {
         // select 결과가 없으면 빈 값이 날아가겠지. 이건 위에서 잡아주면 될듯, 여기에 닉네임이 필요할까?
         const fUser: User | undefined = await User.createQueryBuilder('user')
-            .select([
-                'user.u_id',
-                'user.userName',
-                'user.password',
-                'user.salt'
-            ])
+            .select(['user.u_id', 'user.userName', 'user.password', 'user.salt'])
             .where('user.username = :id', { id: userName })
             .getOne();
 
@@ -51,10 +46,7 @@ export const findUserByToken = async (
 // }
 
 // 존나 위험하지 않을까....
-export const getUserDetail = async (
-    data: number,
-    admin: boolean
-): Promise<User | undefined> => {
+export const getUserDetail = async (data: number, admin: boolean): Promise<User | undefined> => {
     const userId: number = data;
     let selectArr: Array<string>;
     if (admin) {
@@ -82,23 +74,14 @@ export const getUserDetail = async (
 // 아이디, 닉네임 중복 검사를 만들면 되지 않을까...
 // 회원가입, 해당 계정이 있는지부터 체크해야함.
 export const insertUser = async (user: newUser): Promise<User | undefined> => {
-    const {
-        id,
-        pwd,
-        salt,
-        nick,
-        fName,
-        lName,
-        /* age, sex, mail, ph, */ sites,
-        intro
-    }: newUser = user;
+    const { userId, pwd, salt, nick, fName, lName, sArr, intro }: newUser = user;
 
     try {
         const iUser: InsertResult = await User.createQueryBuilder()
             .insert()
             .into(User)
             .values({
-                userName: id,
+                userName: userId,
                 password: pwd,
                 salt,
                 nickName: nick,
@@ -108,32 +91,22 @@ export const insertUser = async (user: newUser): Promise<User | undefined> => {
                 // sex: sex,
                 // email: mail,
                 // phone: ph,
-                sites,
+                sites: sArr,
                 introduction: intro
             })
             .execute();
 
         console.log(iUser);
-        return findUserById(id);
+        return findUserById(userId);
     } catch (err) {
         // console.error(err);
         throw new err();
     }
 };
 // 해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?
-export const updateUser = async (
-    data: number,
-    user: existingUser
-): Promise<UpdateResult | undefined> => {
+export const updateUser = async (data: number, user: existingUser) => {
     const userId: number = data;
-    const {
-        pwd,
-        nick,
-        fName,
-        lName,
-        /* age, sex, mail, ph, */ sites,
-        intro
-    }: existingUser = user;
+    const { pwd, nick, fName, lName, /* age, sex, mail, ph, */ sArr, intro }: existingUser = user;
 
     try {
         const uUser: UpdateResult = await User.createQueryBuilder()
@@ -147,7 +120,7 @@ export const updateUser = async (
                 // sex: sex,
                 // email: mail,
                 // phone: ph,
-                sites,
+                sites: sArr,
                 introduction: intro
             })
             .where('user.u_id = :id', { id: userId })
@@ -161,9 +134,7 @@ export const updateUser = async (
 };
 
 // 이것도 auth 거쳐야함.
-export const deleteUser = async (
-    data: number
-): Promise<DeleteResult | undefined> => {
+export const deleteUser = async (data: number): Promise<DeleteResult | undefined> => {
     const userId: number = data;
 
     try {

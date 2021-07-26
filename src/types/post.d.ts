@@ -3,11 +3,11 @@ export interface searchPostData {
     text: string
 }
 
-export interface newPost extends existingPost {
-    user: User
-}
-
 export interface existingPost {
     title: string,
     ctnt: string,
+}
+
+export interface newPost extends existingPost {
+    user: User
 }

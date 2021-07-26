@@ -1,16 +1,16 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
-import User from "./users";
+import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import User from './users';
 
 //user를 user, profile, sites로 나누는건 나중에 transaction을 이용해서 짜자... 일단은 내비두자
 @Entity()
 class Profile extends BaseEntity {
     @PrimaryColumn()
-    @OneToOne(type => User)
-    @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
+    @OneToOne((type) => User)
+    @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
     @Column({ comment: '이름, 성' })
-    name!: string[]
+    name!: string[];
 
     @Column({ length: 12, unique: true, comment: '닉네임' })
     nickName!: string;
@@ -27,6 +27,6 @@ class Profile extends BaseEntity {
     @Column({ comment: '이메일' })
     email!: string;
 
-    @Column({ default: "", comment: '자기소개' })
+    @Column({ default: '', comment: '자기소개' })
     introduction!: string;
 }

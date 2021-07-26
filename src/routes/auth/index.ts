@@ -1,11 +1,7 @@
 import { Router } from 'express';
 
 import { auth } from '../../middleware/auth';
-import {
-    userLogin,
-    userLogout,
-    userSignup
-} from '../../controller/authController';
+import { userLogin, userLogout, userSignup } from '../../controller/authController';
 
 const router: Router = Router();
 router.use('/login', auth, userLogin);

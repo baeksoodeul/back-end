@@ -1,4 +1,14 @@
-import { PrimaryGeneratedColumn, Column, Entity, BaseEntity, ManyToOne, JoinColumn, BeforeInsert, BeforeUpdate, AfterInsert } from 'typeorm';
+import {
+    PrimaryGeneratedColumn,
+    Column,
+    Entity,
+    BaseEntity,
+    ManyToOne,
+    JoinColumn,
+    BeforeInsert,
+    BeforeUpdate,
+    AfterInsert
+} from 'typeorm';
 import User from './users';
 import Post from './posts';
 import Comment from './comments';
@@ -13,17 +23,17 @@ class Report extends BaseEntity {
     r_id!: number;
 
     //신고자
-    @ManyToOne(type => User)
-    @JoinColumn({name: 'u_id', referencedColumnName: 'u_id'})
+    @ManyToOne((type) => User)
+    @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
     //foreign key도 null일 수 있다
-    @ManyToOne(type => Post, {nullable: true})
-    @JoinColumn({name: 'p_id', referencedColumnName: 'p_id'})
+    @ManyToOne((type) => Post, { nullable: true })
+    @JoinColumn({ name: 'p_id', referencedColumnName: 'p_id' })
     post!: Post;
 
-    @ManyToOne(type => Comment, {nullable: true})
-    @JoinColumn({name: 'c_id', referencedColumnName: 'c_id'})
+    @ManyToOne((type) => Comment, { nullable: true })
+    @JoinColumn({ name: 'c_id', referencedColumnName: 'c_id' })
     comment!: Comment;
 
     @Column()

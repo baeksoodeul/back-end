@@ -21,15 +21,32 @@
     },
     "plugins": ["@typescript-eslint", "prettier"],
     "rules": {
+        //camelcase off
+        "camelcase": "off",
+        //생성자 대문자 안써서 에러떠서 off
+        "new-cap": "off",
+        //console.log~ warning안뜸
         "no-console": "off",
-        "prettier/prettier": [
-            "error",
-            {
-                "endOfLine": "auto"
-            }
-        ],
+        //import 해온거 안써도 warning안뜸
+        "no-unused-vars": "off",
+        //주석 띄워쓰기 안해도됨
+        "spaced-comment": "off",
+        //export default 안해도됨
+        "import/prefer-default-export": "off",
+        //type 다 정해주라해서 함수 type정하기 귀찮아서 꺼버림
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        //import 해온거 안써도 warning안뜸
+        "@typescript-eslint/no-unused-vars": "off",
+        //자꾸 함수인자 갖고 뭐라해서 그냥 꺼버림
+        "prettier/prettier": "off",
+        //return 없으면 에러 떠서 꺼버림(try catch에서 catch일때 return 없다고 에러 뜸)
+        "consistent-return": "off",
+        //확장자관련
         "import/extensions": "off",
-        "import/no-unresolved": "off"
+        //경로 관련
+        "import/no-unresolved": "off",
+        //any 사용가능
+        "@typescript-eslint/no-explicit-any": "off"
     },
     "ignorePatterns": ["node_modules/"]
 }

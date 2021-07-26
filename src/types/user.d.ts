@@ -7,11 +7,11 @@ export interface existingUser {
     //sex: string,
     //mail: string,
     //ph: string,
-    sites: Array<string>,
+    sArr: Array<string>,
     intro: string,
 }
 
 export interface newUser extends existingUser {
-    id: string,
+    userId: string,
     salt: string
 };
