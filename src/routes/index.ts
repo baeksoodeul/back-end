@@ -4,7 +4,6 @@ import { Router } from 'express';
 import board from './board';
 import user from './user';
 import post from './post';
-import login from './auth';
 
 const router = Router();
 router.use('/board', board);

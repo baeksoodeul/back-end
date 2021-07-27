@@ -6,7 +6,7 @@ import User from '../model/users';
 import { newUser, existingUser } from '../types/user';
 
 // username
-export const findUserById = async (data: string): Promise<User | undefined> => {
+export const findUserById = async (data: string) => {
     const userName = data;
 
     try {
@@ -18,13 +18,12 @@ export const findUserById = async (data: string): Promise<User | undefined> => {
 
         return fUser;
     } catch (err) {
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 // decoded 타입은 나중에 다시 생각
-export const findUserByToken = async (
-    decoded: JwtPayload | undefined
-): Promise<User | undefined> => {
+export const findUserByToken = async (decoded: JwtPayload | undefined) => {
     const tokenData: JwtPayload = decoded as JwtPayload;
 
     try {
@@ -73,7 +72,7 @@ export const getUserDetail = async (data: number, admin: boolean): Promise<User 
 // insert, update, delete
 // 아이디, 닉네임 중복 검사를 만들면 되지 않을까...
 // 회원가입, 해당 계정이 있는지부터 체크해야함.
-export const insertUser = async (user: newUser): Promise<User | undefined> => {
+export const insertUser = async (user: newUser) => {
     const { userId, pwd, salt, nick, fName, lName, sArr, intro }: newUser = user;
 
     try {
@@ -96,8 +95,8 @@ export const insertUser = async (user: newUser): Promise<User | undefined> => {
             })
             .execute();
 
-        console.log(iUser);
-        return findUserById(userId);
+        //console.log(iUser);
+        return iUser;
     } catch (err) {
         // console.error(err);
         throw new err();

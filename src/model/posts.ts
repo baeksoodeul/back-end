@@ -1,12 +1,12 @@
 import {
-	PrimaryGeneratedColumn,
-	Column,
-	BaseEntity,
-	Entity,
-	ManyToOne,
-	JoinColumn,
-	BeforeInsert,
-	BeforeUpdate
+    PrimaryGeneratedColumn,
+    Column,
+    BaseEntity,
+    Entity,
+    ManyToOne,
+    JoinColumn,
+    BeforeInsert,
+    BeforeUpdate
 } from 'typeorm';
 
 import User from './users';
@@ -14,50 +14,51 @@ import { dateFormatter } from '../lib/formatter';
 
 @Entity()
 class Post extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	p_id!: number;
+    @PrimaryGeneratedColumn()
+    p_id!: number;
 
-	@ManyToOne((type) => User, { onDelete: 'CASCADE', nullable: false })
-	@JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
-	user!: User;
+    @ManyToOne((type) => User, { onDelete: 'CASCADE', nullable: false })
+    @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
+    user!: User;
 
-	@Column()
-	title!: string;
+    @Column()
+    title!: string;
 
-	@Column()
-	content!: string;
+    @Column()
+    content!: string;
 
-	@Column({ default: 0 })
-	lookUp!: number;
+    @Column({ default: 0 })
+    lookUp!: number;
 
-	@Column({ default: 0 })
-	recommendation!: number;
+    @Column({ default: 0 })
+    recommendation!: number;
 
-	@Column()
-	site!: string[];
+    //이미지, site, tag들을 어떻게 처리해야할 지 생각해봐야함.
+    @Column()
+    site!: string[];
 
-	@Column()
-	tag!: string[];
+    @Column()
+    tag!: string[];
 
-	@Column({ default: true })
-	enabled!: boolean;
+    @Column({ default: true })
+    enabled!: boolean;
 
-	@Column()
-	writtenDate!: string;
+    @Column()
+    writtenDate!: string;
 
-	@Column({ nullable: true })
-	updatedDate!: string | null;
+    @Column({ nullable: true })
+    updatedDate!: string | null;
 
-	@BeforeInsert()
-	setWrittenDate() {
-		this.writtenDate = dateFormatter(new Date());
-		this.updatedDate = null;
-	}
+    @BeforeInsert()
+    setWrittenDate() {
+        this.writtenDate = dateFormatter(new Date());
+        this.updatedDate = null;
+    }
 
-	@BeforeUpdate()
-	setUpdatedDate() {
-		this.updatedDate = dateFormatter(new Date());
-	}
+    @BeforeUpdate()
+    setUpdatedDate() {
+        this.updatedDate = dateFormatter(new Date());
+    }
 }
 
 export default Post;

@@ -2,13 +2,14 @@
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 import Post from '../model/posts';
+import User from '../model/users';
 // import User from '../model/users';
 
-import { existingPost, newPost, searchPostData } from '../types/post';
+import { existingPost, fileType, newPost, searchPostData } from '../types/post';
 
 // 일단 게시글 정렬은 최신순으로
 // 함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
-
+//그냥 이거를 돌려쓰면 안되나. 흠?
 export const getPostList = async (): Promise<Post[] | undefined> => {
     try {
         const postList = await Post.createQueryBuilder('post')
@@ -19,8 +20,8 @@ export const getPostList = async (): Promise<Post[] | undefined> => {
 
         return postList;
     } catch (err) {
-        // console.error(err);
-        // throw err;
+        console.log(err);
+        throw err;
     }
 };
 
@@ -101,7 +102,8 @@ export const findPostByText = async (data: searchPostData) => {
     }
 };
 
-export const createPost = async (post: newPost): Promise<InsertResult | undefined> => {
+//여기에 이미지도 추가해야함... 어떻게? -> 디비에는 이미지 이름을 넣고, 이미지를 불러오는 방법으로 해야함.
+export const insertPost = async (post: newPost): Promise<InsertResult | undefined> => {
     const { user, title, ctnt }: newPost = post;
     try {
         const iPost: InsertResult = await Post.createQueryBuilder()
@@ -114,10 +116,12 @@ export const createPost = async (post: newPost): Promise<InsertResult | undefine
             })
             .execute();
 
+        //나중에 한번 돌려봐야할듯
+        //console.log(iPost);
         return iPost;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 
@@ -157,4 +161,9 @@ export const deletePost = async (data: number) => {
         // console.error(err);
         // throw new err;
     }
+};
+
+export const uploadFiles = async (user: User | undefined, file: fileType) => {
+    const userInfo: User | undefined = user;
+    const file;
 };

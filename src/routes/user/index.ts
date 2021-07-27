@@ -4,12 +4,16 @@ import { Router } from 'express';
 // import post from '../post';
 // import comment from '../comment';
 import { auth } from '../../middleware/auth';
+import Auth from '../auth';
 
 const router: Router = Router();
 
 // 로그인, 로그아웃, 비번 찾기, 회원가입 등은 auth를 따로 빼서 넣을까...
-router.get('/auth', auth);
-router.get('/mypage', auth);
+//여기 auth를 정리해줘야할듯...
+router.get('/auth', Auth);
+//로그인이 되어있을때는 auth에서 next로 넘어가 mypage를 불러옴.
+//로그인이 안되어 있을때는 next로 넘어가지 못함. 그냥 res.json에 따라 빈 마이 페이지를 불러옴.
+router.get('/mypage', auth); //getmypage
 
 // 또 다른 user 기능이 뭐가 있을까
 

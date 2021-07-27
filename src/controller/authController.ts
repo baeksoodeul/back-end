@@ -16,6 +16,13 @@ import { newUser } from '../types/user';
 */
 // 로그인
 export const userLogin: RequestHandler = async (req, res, next) => {
+    //이미 로그인이 되어있을 경우를 대비해야함. 이미 로그인 되어 있을때, 로그인 시도가 있을 경우 그냥 로그아웃 시켜서 반환시킴. => 이후 다시 재 로그인(?)
+    if (req.cookies.x_auth !== '') {
+        return res.clearCookie('x_auth').status(60).json({
+            success: false,
+            message: 'already logged'
+        });
+    }
     try {
         const userData = await findUserById(req.body.user.id);
 
@@ -41,6 +48,7 @@ export const userLogin: RequestHandler = async (req, res, next) => {
 };
 
 // 회원가입
+//회원가입도 로그인 되어 있을때는 못하도록 막아야 하나... 이거는 얘기를 해봐야할듯
 export const userSignup: RequestHandler = async (req, res, next) => {
     try {
         const { id, password, nickName, lastName, firstName, sites, introduction } = req.body.user;
@@ -58,6 +66,8 @@ export const userSignup: RequestHandler = async (req, res, next) => {
         };
 
         const user = await insertUser(userData);
+        //console에 찍히는거 보면서 확인해봐야 알것 같음... ㅇㅇ; 성공했을때 결과물 알면 될듯?
+        //!user는 아닐것 같고 대충 !user.generatedMaps.id .... 이런식으로 가야할듯
         if (!user) {
             return res.status(600).json({
                 success: false,
@@ -94,4 +104,4 @@ export const userLogout: RequestHandler = async (req: any, res, next) => {
         next(err);
     }
 };
-// 아이디, 비밀번호 찾기
+// 아이디, 비밀번호 찾기(나중에 구현)
