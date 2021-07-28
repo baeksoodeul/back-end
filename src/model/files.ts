@@ -27,20 +27,27 @@ class File extends BaseEntity {
 
     //필드를 넣어야 하려나... -> 썸네일 및 용도 구분
 
-    @Column()
+    @Column({ comment: '서버에 저장될 파일 이름' })
     fileName!: string;
 
-    @Column()
+    @Column({ comment: '게시자가 올리는 파일 이름' })
     originalName!: string;
 
-    @Column()
+    @Column({ comment: '파일이 저장될 경로' })
     path!: string;
 
-    @Column()
+    @Column({ comment: '파일크기' })
     size!: number;
 
-    @Column()
+    //idx가 0이면 썸네일, 그 다음부터는 순서대로
+    @Column({ comment: '게시물 내 사진의 순서' })
+    idx!: number;
+
+    @Column({ comment: '업로드 날짜' })
     uploadedDate!: string;
+
+    @Column({ default: false, comment: '삭제 여부' })
+    isDeleted!: boolean;
 
     @BeforeInsert()
     setUploadedDate(): void {

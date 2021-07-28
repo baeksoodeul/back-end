@@ -3,6 +3,7 @@ import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 import Post from '../model/posts';
 import User from '../model/users';
+import File from '../model/files';
 // import User from '../model/users';
 
 import { existingPost, fileType, newPost, searchPostData } from '../types/post';
@@ -91,7 +92,7 @@ export const findPostByText = async (data: searchPostData) => {
                 'user.nickName'
             ])
             .where(condition, { text: searchText })
-            .andWhere('post.enabled: true')
+            .andWhere('post.enabled = true')
             .orderBy('post.writtenDate', 'DESC') // default
             .getMany();
 
@@ -103,7 +104,7 @@ export const findPostByText = async (data: searchPostData) => {
 };
 
 //여기에 이미지도 추가해야함... 어떻게? -> 디비에는 이미지 이름을 넣고, 이미지를 불러오는 방법으로 해야함.
-export const insertPost = async (post: newPost): Promise<InsertResult | undefined> => {
+export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
         const iPost: InsertResult = await Post.createQueryBuilder()
@@ -116,9 +117,13 @@ export const insertPost = async (post: newPost): Promise<InsertResult | undefine
             })
             .execute();
 
+        const fPost: Post | undefined = await Post.createQueryBuilder()
+            .select(Post)
+            .where('post.p_id = :id', { id: iPost.identifiers[0].id })
+            .getOne();
         //나중에 한번 돌려봐야할듯
         //console.log(iPost);
-        return iPost;
+        return fPost;
     } catch (err) {
         console.log(err);
         throw err;
@@ -163,7 +168,35 @@ export const deletePost = async (data: number) => {
     }
 };
 
-export const uploadFiles = async (user: User | undefined, file: fileType) => {
-    const userInfo: User | undefined = user;
-    const file;
+//파일(사진) 업로드 기능
+// prettier-ignore
+export const uploadFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
+    const userInfo = user;
+    const postInfo = post;
+    const fileArr = files;
+
+    try {
+        const iFiles: InsertResult[] = [];
+        fileArr.map(async (file: fileType, index) => {
+            iFiles[index] = await File.createQueryBuilder()
+                .insert()
+                .into(File)
+                .values({
+                    user: userInfo,
+                    post: postInfo,
+                    fileName: file.filename,
+                    originalName: file.originalname,
+                    path: file.path,// 이거 path를 파일이름까지 안하고 경로까지만 하면 될것 같은데... 이대로는 파일이름까지,
+                    size: file.size,
+                    idx: index
+                })
+                .execute();
+        });
+
+        return iFiles;
+        
+    } catch(err) {
+        console.log(err);
+        throw new err;
+    }
 };

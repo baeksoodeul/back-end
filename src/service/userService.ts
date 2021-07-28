@@ -1,5 +1,7 @@
-import { JwtPayload } from 'jsonwebtoken';
+import { Jwt, JwtPayload } from 'jsonwebtoken';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
+import File from '../model/files';
+import Post from '../model/posts';
 
 // import Post from '../model/posts';
 import User from '../model/users';
@@ -69,6 +71,46 @@ export const getUserDetail = async (data: number, admin: boolean): Promise<User 
     }
 };
 
+export const getMyPosts = async (decoded: JwtPayload | undefined) => {
+    const tokenData: JwtPayload = decoded as JwtPayload;
+
+    try {
+        const posts: Post[] = await Post.createQueryBuilder('post')
+            .leftJoin('post.user', 'user')
+            .select(['post.p_id', 'user.u_id'])
+            .where('user.u_id = :id', { id: tokenData.u_id })
+            .orderBy('post.writtenDate', 'DESC')
+            .getMany();
+
+        return posts;
+    } catch (err) {
+        console.log(err);
+        throw new err();
+    }
+};
+
+//일단 사진만 생각하자, 이외의 첨부파일은 나중에 생각
+export const getMyPhotos = async (decoded: JwtPayload | undefined) => {
+    const tokenData: JwtPayload = decoded as JwtPayload;
+
+    try {
+        //이렇게 뽑으면 썸네일에 해당하는 사진도 같이 뽑힌다. 이것도 얘기를 한번 나눠봐야할듯.
+        const files: File[] = await File.createQueryBuilder('file')
+            .leftJoin('file.user', 'user')
+            .leftJoin('file.post', 'post')
+            .select(['user.u_id', 'post.p_id', 'file.path', 'file.idx'])
+            .where('user.u_id = :id', { id: tokenData.u_id })
+            .orderBy('file.uploadedDate', 'DESC')
+            .addOrderBy('idx', 'DESC')
+            .getMany();
+
+        return files;
+    } catch (err) {
+        console.log(err);
+        throw new err();
+    }
+};
+
 // insert, update, delete
 // 아이디, 닉네임 중복 검사를 만들면 되지 않을까...
 // 회원가입, 해당 계정이 있는지부터 체크해야함.
@@ -98,7 +140,7 @@ export const insertUser = async (user: newUser) => {
         //console.log(iUser);
         return iUser;
     } catch (err) {
-        // console.error(err);
+        console.log(err);
         throw new err();
     }
 };

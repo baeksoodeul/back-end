@@ -26,7 +26,7 @@ class Comment extends BaseEntity {
     @JoinColumn({ name: 'p_id', referencedColumnName: 'p_id' })
     post!: Post;
 
-    @Column()
+    @Column({comment: '추천수'})
     recommendation!: number;
 
     //답글 기능
@@ -34,7 +34,7 @@ class Comment extends BaseEntity {
     @Column({ default: true })
     enabled!: boolean;
 
-    @Column()
+    @Column({comment: '작성일자'})
     writtenDate!: string;
 
     @Column()

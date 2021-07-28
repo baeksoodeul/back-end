@@ -21,16 +21,16 @@ class Post extends BaseEntity {
     @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
-    @Column()
+    @Column({ comment: '제목' })
     title!: string;
 
-    @Column()
+    @Column({ comment: '내용' })
     content!: string;
 
-    @Column({ default: 0 })
+    @Column({ default: 0, comment: '조회수' })
     lookUp!: number;
 
-    @Column({ default: 0 })
+    @Column({ default: 0, comment: '추천수' })
     recommendation!: number;
 
     //이미지, site, tag들을 어떻게 처리해야할 지 생각해봐야함.
@@ -40,10 +40,11 @@ class Post extends BaseEntity {
     @Column()
     tag!: string[];
 
+    //얘를 isdeleted로 넘길까
     @Column({ default: true })
     enabled!: boolean;
 
-    @Column()
+    @Column({ comment: '작성일자' })
     writtenDate!: string;
 
     @Column({ nullable: true })
