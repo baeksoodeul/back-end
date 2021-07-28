@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.ts",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint ."
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.12",
+    "@types/jsonwebtoken": "^8.5.4",
+    "@types/multer": "^1.4.7",
     "@types/node": "^15.12.5",
     "@types/styled-components": "^5.1.10",
     "@types/winston": "^2.4.4",
@@ -18,8 +22,10 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "date-utils": "^1.2.21",
     "dotenv": "^10.0.0",
+    "eslint-config-airbnb": "^18.2.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "joi": "^17.4.0",
@@ -32,13 +38,23 @@
     "reflect-metadata": "^0.1.13",
     "ts-node": "^10.0.0",
     "typeorm": "^0.3.0-alpha.24",
-    "typescript": "^4.3.4",
+    "types": "file:../../../jsonwebtoken",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
     "@types/morgan": "^1.9.2",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.1.0",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5",
     "webpack": "^5.41.1",
     "webpack-cli": "^4.7.2"
   }

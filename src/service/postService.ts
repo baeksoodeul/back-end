@@ -1,60 +1,58 @@
-import joi from 'joi';
+// import joi from 'joi';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 
 import Post from '../model/posts';
 import User from '../model/users';
+import File from '../model/files';
+// import User from '../model/users';
 
-import { existingPost, newPost, searchPostData } from '../types/post';
+import { existingPost, fileType, newPost, searchPostData } from '../types/post';
 
-//일단 게시글 정렬은 최신순으로
-//함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
-
-export const getPostList = async () => {
+// 일단 게시글 정렬은 최신순으로
+// 함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
+//그냥 이거를 돌려쓰면 안되나. 흠?
+export const getPostList = async (): Promise<Post[] | undefined> => {
     try {
-        const postList = await Post
-            .createQueryBuilder('post')
+        const postList = await Post.createQueryBuilder('post')
             .leftJoin('post.user', 'user')
             .select(['post', 'user.nickName'])
             .where('post.enabled = true')
             .getMany();
 
         return postList;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw err;
-    }
-}
+};
 
-export const getPostDetail = async (data: number) => {
+export const getPostDetail = async (data: number): Promise<Post | undefined> => {
     const postId: number = data;
 
     try {
-        const postDetail = await Post
-            .createQueryBuilder('post')
+        const postDetail = await Post.createQueryBuilder('post')
             .leftJoin('post.user', 'user')
-            .select(['post' , 'user.nickName'])
+            .select(['post', 'user.nickName'])
             .where('post.p_id = :id', { id: postId })
             .getOne();
-        
-        if(!postDetail) throw new Error('NOT_FOUND');
+
+        if (!postDetail) throw new Error('NOT_FOUND');
 
         return postDetail;
+    } catch (err) {
+        // console.error(err);
+        // throw new err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
-    }
-}
+};
 
-//searchService를 따로 빼야하나
+// searchService를 따로 빼야하나
 export const findPostByText = async (data: searchPostData) => {
     let searchText: string = data.type;
-    const searchType: string = data.text; //joi 적용해보는거 괜찮을듯
+    const searchType: string = data.text; // joi 적용해보는거 괜찮을듯
 
     let condition: string;
 
-    switch(searchType){
+    switch (searchType) {
         case 'title':
             condition = "post.title like '%' || :text || '%'";
             break;
@@ -64,97 +62,141 @@ export const findPostByText = async (data: searchPostData) => {
             break;
 
         case 'writer':
-            condition = "user.nickName = :text";
+            condition = 'user.nickName = :text';
             break;
 
         case 'title+content':
-            condition = "(post.title like '%' || :text || '%' OR post.content like '%' || :text || '%')";
+            condition =
+                "(post.title like '%' || :text || '%' OR post.content like '%' || :text || '%')";
             break;
 
-        default://serarchText를 let으로 바꾸고 빈칸을 주긴 하지만 에러가 뜨지않는다면 굳이 이렇게 할 필요는 없음. 그리고 에러가 뜨더라도 그냥 에러 처리를 해줄수 있다면 상관없지않을까
+        default:
+            // serarchText를 let으로 바꾸고 빈칸을 주긴 하지만 에러가 뜨지않는다면 굳이 이렇게 할 필요는 없음. 그리고 에러가 뜨더라도 그냥 에러 처리를 해줄수 있다면 상관없지않을까
             condition = "post.title like '%' || :text || '%'";
-            searchText = "";
+            searchText = '';
             break;
     }
 
     try {
-        const postList = await Post
-            .createQueryBuilder('post')
+        const postList = await Post.createQueryBuilder('post')
             .leftJoin('post.user', 'user')
-            .select(['post.p_id', 'post.title', 'post.lookUp', 'post.recommendation', 'post.writtenDate', 'post.site', 'post.tag', 'user.u_id', 'user.nickName'])
-            .where(condition, { text: searchText} )
-            .andWhere('post.enabled: true')
-            .orderBy('post.writtenDate', 'DESC')//default
+            .select([
+                'post.p_id',
+                'post.title',
+                'post.lookUp',
+                'post.recommendation',
+                'post.writtenDate',
+                'post.site',
+                'post.tag',
+                'user.u_id',
+                'user.nickName'
+            ])
+            .where(condition, { text: searchText })
+            .andWhere('post.enabled = true')
+            .orderBy('post.writtenDate', 'DESC') // default
             .getMany();
 
         return postList;
+    } catch (err) {
+        // console.error(err);
+        // throw new err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
-    }
-}
+};
 
-export const createPost = async (post: newPost) => {
+//여기에 이미지도 추가해야함... 어떻게? -> 디비에는 이미지 이름을 넣고, 이미지를 불러오는 방법으로 해야함.
+export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
-        const iPost: InsertResult = await Post
-            .createQueryBuilder()
+        const iPost: InsertResult = await Post.createQueryBuilder()
             .insert()
             .into(Post)
             .values({
-                user: user,
-                title: title,
+                user,
+                title,
                 content: ctnt
             })
             .execute();
 
-        return iPost;
+        const fPost: Post | undefined = await Post.createQueryBuilder()
+            .select(Post)
+            .where('post.p_id = :id', { id: iPost.identifiers[0].id })
+            .getOne();
+        //나중에 한번 돌려봐야할듯
+        //console.log(iPost);
+        return fPost;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
-    }
-}
+};
 
 export const updatePost = async (data: number, post: existingPost) => {
     const postId: number = data;
     const { title, ctnt }: existingPost = post;
 
     try {
-        const uPost: UpdateResult = await Post
-            .createQueryBuilder()
+        const uPost: UpdateResult = await Post.createQueryBuilder()
             .update(Post)
             .set({
-                title: title,
-                content: ctnt,
+                title,
+                content: ctnt
             })
             .where('post.p_id = :id', { id: postId })
             .execute();
-        
+
         return uPost;
+    } catch (err) {
+        // console.error(err);
+        // throw new err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
-    }
-}
+};
 
 export const deletePost = async (data: number) => {
     const postId: number = data;
 
     try {
-        const dPsot: DeleteResult = await Post
-            .createQueryBuilder()
+        const dPsot: DeleteResult = await Post.createQueryBuilder()
             .delete()
             .from(Post)
             .where('post.p_id = :id', { id: postId })
             .execute();
 
         return dPsot;
+    } catch (err) {
+        // console.error(err);
+        // throw new err;
     }
-    catch(err) {
-        //console.error(err);
-        //throw new err;
+};
+
+//파일(사진) 업로드 기능
+// prettier-ignore
+export const uploadFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
+    const userInfo = user;
+    const postInfo = post;
+    const fileArr = files;
+
+    try {
+        const iFiles: InsertResult[] = [];
+        fileArr.map(async (file: fileType, index) => {
+            iFiles[index] = await File.createQueryBuilder()
+                .insert()
+                .into(File)
+                .values({
+                    user: userInfo,
+                    post: postInfo,
+                    fileName: file.filename,
+                    originalName: file.originalname,
+                    path: file.path,// 이거 path를 파일이름까지 안하고 경로까지만 하면 될것 같은데... 이대로는 파일이름까지,
+                    size: file.size,
+                    idx: index
+                })
+                .execute();
+        });
+
+        return iFiles;
+        
+    } catch(err) {
+        console.log(err);
+        throw new err;
     }
-}
+};

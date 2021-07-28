@@ -3,12 +3,15 @@ export interface existingUser {
     nick: string,
     fName: string,
     lName: string,
-    age: number,
-    sex: string,
-    sites: Array<string>,
+    //age: number,
+    //sex: string,
+    //mail: string,
+    //ph: string,
+    sArr: Array<string>,
     intro: string,
 }
 
 export interface newUser extends existingUser {
-    id: string,
+    userId: string,
+    salt: string
 };

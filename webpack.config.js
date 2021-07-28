@@ -1,26 +1,27 @@
-const webpack = require("webpack");
+//const webpack = require("webpack");
+import webpack from 'webpack';
 
 module.exports = {
     entry: {
-        main: "./src/index.ts",
-    }, 
+        main: './src/index.ts'
+    },
     output: {
-        filename: "bundle.js",
-        path: "./dist",
+        filename: 'bundle.js',
+        path: './dist'
     },
     module: {
         rules: [
             {
-                test:/\.ts$/,
-                exclude: ["node_moudles", "public"],
+                test: /\.ts$/,
+                exclude: ['node_moudles', 'public'],
                 use: {
-                    loader: "babel-loader",
+                    loader: 'babel-loader',
                     options: {
-                        presets: ["env"],
-                    },
-                },
-            },
-        ],
+                        presets: ['env']
+                    }
+                }
+            }
+        ]
     },
-    plugins: [new webpack.optimize.UglifyJsPlugin()],
-}
+    plugins: [new webpack.optimize.UglifyJsPlugin()]
+};
