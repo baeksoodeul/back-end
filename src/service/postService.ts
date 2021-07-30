@@ -26,6 +26,7 @@ export const getPostList = async (): Promise<Post[] | undefined> => {
     }
 };
 
+//이거좀 수정해야할듯
 export const getPostDetail = async (data: number): Promise<Post | undefined> => {
     const postId: number = data;
 
@@ -39,11 +40,29 @@ export const getPostDetail = async (data: number): Promise<Post | undefined> => 
         if (!postDetail) throw new Error('NOT_FOUND');
 
         return postDetail;
-    } catch (err) {
-        // console.error(err);
-        // throw new err;
+    } catch (err){
+        console.log(err);
+        throw new err;
     }
 };
+
+// export const findPostById = async (data: number) => {
+//     const postId: number = data;
+
+//     try {
+//         const fPost = await Post.createQueryBuilder('post')
+//             .select(Post)
+//             .where('post.p_id = :id', { id: postId })
+//             .getOne();
+
+//         if(!fPost) throw new Error('NOT_FOUND');
+
+//         return fPost;
+//     } catch(err) {
+//         console.log(err);
+//         throw err;
+//     }
+// }
 
 // searchService를 따로 빼야하나
 export const findPostByText = async (data: searchPostData) => {
@@ -103,7 +122,7 @@ export const findPostByText = async (data: searchPostData) => {
     }
 };
 
-//여기에 이미지도 추가해야함... 어떻게? -> 디비에는 이미지 이름을 넣고, 이미지를 불러오는 방법으로 해야함.
+
 export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
@@ -117,11 +136,11 @@ export const insertPost = async (post: newPost) => {
             })
             .execute();
 
-        const fPost: Post | undefined = await Post.createQueryBuilder()
-            .select(Post)
-            .where('post.p_id = :id', { id: iPost.identifiers[0].id })
+        const fPost = await Post.createQueryBuilder('post')
+            .select('post')
+            .where('post.p_id = :id', { id: iPost.generatedMaps[0].id })
             .getOne();
-        //나중에 한번 돌려봐야할듯
+        //나중에 한번 돌려봐야할듯, generatedmaps 쓰는것도 좀 아닌것 같은디
         //console.log(iPost);
         return fPost;
     } catch (err) {
@@ -130,24 +149,29 @@ export const insertPost = async (post: newPost) => {
     }
 };
 
-export const updatePost = async (data: number, post: existingPost) => {
+export const updatePost = async (data: number, param: string, ctnt: string) => {
     const postId: number = data;
-    const { title, ctnt }: existingPost = post;
 
     try {
         const uPost: UpdateResult = await Post.createQueryBuilder()
             .update(Post)
             .set({
-                title,
+                title: param,
                 content: ctnt
             })
             .where('post.p_id = :id', { id: postId })
             .execute();
 
-        return uPost;
+        const fPost = await Post.createQueryBuilder('post')
+            .select('post')
+            .where('post.p_id = :id', { id: uPost.generatedMaps[0].id })
+            .getOne();
+        //나중에 한번 돌려봐야할듯, generatedmaps 쓰는것도 좀 아닌것 같은디
+        //console.log(iPost);
+        return fPost;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 
@@ -163,14 +187,14 @@ export const deletePost = async (data: number) => {
 
         return dPsot;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 
 //파일(사진) 업로드 기능
 // prettier-ignore
-export const uploadFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
+export const insertFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
     const userInfo = user;
     const postInfo = post;
     const fileArr = files;
@@ -197,6 +221,29 @@ export const uploadFiles = async (user: User | undefined, post: Post | undefined
         
     } catch(err) {
         console.log(err);
-        throw new err;
+        throw err;
     }
 };
+
+export const deleteFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
+    const userInfo = user;
+    const postInfo = post;
+    const fileArr = files;
+}
+
+export const getFiles = async (postId: number) => {
+    try {
+        const files: File[] = await File.createQueryBuilder('File')
+            .leftJoin('file.post', 'post')
+            .select(['file.f_id', 'file.originalname', 'file.size', 'file.idx'])
+            .where('post.p_id = :id', {id: postId})
+            .andWhere('file.isDeleted = false')
+            .orderBy('file.idx', 'DESC')
+            .getMany();
+
+        return files;
+    } catch(err) {
+        console.log(err);
+        throw err;
+    }
+}

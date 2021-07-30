@@ -20,7 +20,7 @@ export const userLogin: RequestHandler = async (req, res, next) => {
     if (req.cookies.x_auth !== '') {
         return res.clearCookie('x_auth').status(60).json({
             success: false,
-            message: 'already logged'
+            message: 'now logged out. try again'
         });
     }
     try {

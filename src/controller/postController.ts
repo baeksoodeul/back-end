@@ -1,10 +1,10 @@
-import { RequestHandler } from 'express';
+import { Request, RequestHandler } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import { InsertResult } from 'typeorm';
 import User from '../model/users';
 import File from '../model/files';
 // prettier-ignore
-import {insertPost, updatePost, deletePost, getPostDetail, getPostList, uploadFiles} from '../service/postService';
+import {insertPost, updatePost, deletePost, getPostDetail, getPostList, insertFiles, getFiles, /*findPostById*/} from '../service/postService';
 import { findUserByToken } from '../service/userService';
 import { fileType, newPost } from '../types/post';
 import Post from '../model/posts';
@@ -24,13 +24,13 @@ export const writePost: RequestHandler = async (req: any, res, next) => {
         return file.size;
     });
 
-    const dc: JwtPayload | undefined = req.decoded;
+    const tokenData: JwtPayload | undefined = req.decoded;
     try {
-        const userInfo: User | undefined = await findUserByToken(dc);
+        const userInfo: User | undefined = await findUserByToken(tokenData);
         if (!userInfo) {
             return res.status(600).json({
                 success: false,
-                message: 'wrong user'
+                message: 'wrong token'
             });
         }
 
@@ -51,8 +51,8 @@ export const writePost: RequestHandler = async (req: any, res, next) => {
         }
 
         //req.files는 filetype 객체의 array로 들어오는게 맞다!
-        if (!req.files) {
-            const iFiles = await uploadFiles(userInfo, wPost, req.files);
+        if (req.files.length) {
+            const iFiles = await insertFiles(userInfo, wPost, req.files);
         } //insertresults[]가 된다.
         //iFiles를 가지고 또 파일이 제대로 업로드가 되었는지 검증을 할 수 있을까....
 
@@ -71,6 +71,49 @@ export const writePost: RequestHandler = async (req: any, res, next) => {
         next(err);
     }
 };
+
+//수정완료
+export const editPost: RequestHandler = async (req: any, res, next) => {
+    const tokenData: JwtPayload | undefined = req.decoded;
+    const postId: number = req.body.post.p_id;
+    try {
+        const userInfo: User | undefined = await findUserByToken(tokenData);
+        //const postInfo: Post | undefined = await findPostById(postId);
+        const files: File[] = await getFiles(postId);
+
+        const ePost = await updatePost(postId, req.body.post.newtitle, req.body.post.newctnt);
+
+        if(!ePost) {
+            res.status(600).json({
+                success: false,
+                message: "수정 실패"
+            });
+        }
+
+        if(!files) { //기존의 첨부파일이 없다는 뜻
+            if(req.files.length) {//새로넣을 첨부파일이 있을때
+                const iFiles = await insertFiles(userInfo, ePost, req.files);
+            }
+        }
+        else {
+            
+        }
+
+
+    } catch(err) {
+        next(err);
+    }
+}
+
+export const removePost: RequestHandler = async (req: any, res, next) => {
+    const tokenData: JwtPayload | undefined = req.decoded;
+
+    try {
+        //auth를 거치고 오는 함수. 마지막으로 확인문구 같은거만 받으면 될듯.
+    } catch(err) {
+        next(err);
+    }
+}
 
 export const postListing: RequestHandler = async (req, res, next) => {
     try {
