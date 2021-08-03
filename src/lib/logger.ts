@@ -12,7 +12,7 @@ const transport =
                   format: format.combine(
                       format.colorize(),
                       format.simple(),
-                      format.printf((info) => `[${info.lelel}] - ${info.message}`)
+                      format.printf((info) => `[${info.level}] - ${info.message}`)
                   ),
                   silent: true
               })
