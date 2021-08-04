@@ -7,6 +7,7 @@ import File from '../model/files';
 // import User from '../model/users';
 
 import { existingPost, fileType, newPost, searchPostData } from '../types/post';
+import { dateFormatter } from '../lib/formatter';
 
 // 일단 게시글 정렬은 최신순으로
 // 함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
@@ -26,6 +27,7 @@ export const getPostList = async (): Promise<Post[] | undefined> => {
     }
 };
 
+//이거좀 수정해야할듯
 export const getPostDetail = async (data: number): Promise<Post | undefined> => {
     const postId: number = data;
 
@@ -40,15 +42,33 @@ export const getPostDetail = async (data: number): Promise<Post | undefined> => 
 
         return postDetail;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw new err();
     }
 };
 
+// export const findPostById = async (data: number) => {
+//     const postId: number = data;
+
+//     try {
+//         const fPost = await Post.createQueryBuilder('post')
+//             .select(Post)
+//             .where('post.p_id = :id', { id: postId })
+//             .getOne();
+
+//         if(!fPost) throw new Error('NOT_FOUND');
+
+//         return fPost;
+//     } catch(err) {
+//         console.log(err);
+//         throw err;
+//     }
+// }
+
 // searchService를 따로 빼야하나
 export const findPostByText = async (data: searchPostData) => {
-    let searchText: string = data.type;
-    const searchType: string = data.text; // joi 적용해보는거 괜찮을듯
+    let searchText: string = data.text;
+    const searchType: string = data.type; // joi 적용해보는거 괜찮을듯
 
     let condition: string;
 
@@ -103,7 +123,6 @@ export const findPostByText = async (data: searchPostData) => {
     }
 };
 
-//여기에 이미지도 추가해야함... 어떻게? -> 디비에는 이미지 이름을 넣고, 이미지를 불러오는 방법으로 해야함.
 export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
@@ -117,11 +136,11 @@ export const insertPost = async (post: newPost) => {
             })
             .execute();
 
-        const fPost: Post | undefined = await Post.createQueryBuilder()
-            .select(Post)
-            .where('post.p_id = :id', { id: iPost.identifiers[0].id })
+        const fPost = await Post.createQueryBuilder('post')
+            .select('post')
+            .where('post.p_id = :id', { id: iPost.generatedMaps[0].id })
             .getOne();
-        //나중에 한번 돌려봐야할듯
+        //나중에 한번 돌려봐야할듯, generatedmaps 쓰는것도 좀 아닌것 같은디
         //console.log(iPost);
         return fPost;
     } catch (err) {
@@ -130,24 +149,29 @@ export const insertPost = async (post: newPost) => {
     }
 };
 
-export const updatePost = async (data: number, post: existingPost) => {
+export const updatePost = async (data: number, param: string, ctnt: string) => {
     const postId: number = data;
-    const { title, ctnt }: existingPost = post;
 
     try {
         const uPost: UpdateResult = await Post.createQueryBuilder()
             .update(Post)
             .set({
-                title,
+                title: param,
                 content: ctnt
             })
             .where('post.p_id = :id', { id: postId })
             .execute();
 
-        return uPost;
+        const fPost = await Post.createQueryBuilder('post')
+            .select('post')
+            .where('post.p_id = :id', { id: uPost.generatedMaps[0].id })
+            .getOne();
+        //나중에 한번 돌려봐야할듯, generatedmaps 쓰는것도 좀 아닌것 같은디
+        //console.log(iPost);
+        return fPost;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 
@@ -163,21 +187,38 @@ export const deletePost = async (data: number) => {
 
         return dPsot;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log(err);
+        throw err;
+    }
+};
+
+export const getFiles = async (postId: number) => {
+    try {
+        const files: Array<File> = await File.createQueryBuilder('File')
+            .leftJoin('file.post', 'post')
+            .select(['file.f_id', 'file.originalname', 'file.size', 'file.idx'])
+            .where('post.p_id = :id', { id: postId })
+            .andWhere('file.isDeleted = false')
+            .orderBy('file.idx', 'DESC')
+            .getMany();
+
+        return files;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
 };
 
 //파일(사진) 업로드 기능
 // prettier-ignore
-export const uploadFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
+export const insertFiles = async (user: User | undefined, post: Post | undefined, files: fileType[]) => {
     const userInfo = user;
     const postInfo = post;
     const fileArr = files;
 
     try {
         const iFiles: InsertResult[] = [];
-        fileArr.map(async (file: fileType, index) => {
+        await fileArr.map(async (file: fileType, index) => {
             iFiles[index] = await File.createQueryBuilder()
                 .insert()
                 .into(File)
@@ -197,6 +238,48 @@ export const uploadFiles = async (user: User | undefined, post: Post | undefined
         
     } catch(err) {
         console.log(err);
-        throw new err;
+        throw err;
+    }
+};
+
+//isDeleted 처리 하는 서비스
+export const deleteFiles = async (fileIds: number[]) => {
+    try {
+        const uFiles: UpdateResult[] = [];
+        await fileIds.map(async (fileId: number, index) => {
+            uFiles[index] = await File.createQueryBuilder()
+                .update(File)
+                .set({
+                    isDeleted: true,
+                    deletedDate: dateFormatter(new Date())
+                })
+                .where('file.f_id = : id', { id: fileId })
+                .execute();
+        });
+
+        return uFiles;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    }
+};
+
+//이미 isdeleted는 처리된 상태
+//삭제를 어떻게 해야할까...
+export const deleteFilesWhileEditingPost = async (postId: number) => {
+    try {
+        //p_id에 해당하는 post의 모든 사진파일을 삭제.
+        const dFiles = await File.createQueryBuilder()
+            .leftJoin('file.post', 'post')
+            .delete()
+            .from(File)
+            .where('post.p_id = :id', { id: postId })
+            .andWhere('file.isDeleted = false')
+            .execute();
+
+        return dFiles;
+    } catch (err) {
+        console.log(err);
+        throw err;
     }
 };

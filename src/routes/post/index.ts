@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { writePost } from '../../controller/postController';
-import { upload } from '../../lib/multer';
+import { upload } from '../../middleware/multer';
 import { auth } from '../../middleware/auth';
 //import { getPostDetail } from
 

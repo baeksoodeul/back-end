@@ -7,13 +7,13 @@ import Post from '../model/posts';
 import User from '../model/users';
 import { newUser, existingUser } from '../types/user';
 
-// username
+// 로그인 시 토큰 발급용
 export const findUserById = async (data: string) => {
     const userName = data;
 
     try {
         // select 결과가 없으면 빈 값이 날아가겠지. 이건 위에서 잡아주면 될듯, 여기에 닉네임이 필요할까?
-        const fUser: User | undefined = await User.createQueryBuilder('user')
+        const fUser = await User.createQueryBuilder('user')
             .select(['user.u_id', 'user.userName', 'user.password', 'user.salt'])
             .where('user.username = :id', { id: userName })
             .getOne();
@@ -29,15 +29,16 @@ export const findUserByToken = async (decoded: JwtPayload | undefined) => {
     const tokenData: JwtPayload = decoded as JwtPayload;
 
     try {
-        const fUser: User | undefined = await User.createQueryBuilder('user')
-            .select(['user'])
+        const fUser = await User.createQueryBuilder('user')
+            .select('user')
             .where('user.u_id = :id', { id: tokenData.u_id })
             .andWhere('user.userName = :user', { user: tokenData.userName })
             .getOne();
 
         return fUser;
     } catch (err) {
-        // throw new err;
+        console.log(err);
+        throw err;
     }
 };
 
@@ -107,7 +108,7 @@ export const getMyPhotos = async (decoded: JwtPayload | undefined) => {
         return files;
     } catch (err) {
         console.log(err);
-        throw new err();
+        throw err();
     }
 };
 
@@ -141,7 +142,7 @@ export const insertUser = async (user: newUser) => {
         return iUser;
     } catch (err) {
         console.log(err);
-        throw new err();
+        throw err();
     }
 };
 // 해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?

@@ -14,7 +14,7 @@ router.get('/auth', Auth);
 //로그인이 되어있을때는 auth에서 next로 넘어가 mypage를 불러옴.
 //로그인이 안되어 있을때는 next로 넘어가지 못함. 그냥 res.json에 따라 빈 마이 페이지를 불러옴.
 router.get('/mypage', auth); //getmypage
-router.get('myphotos', auth); //getmyphotos
+router.get('/myphotos', auth); //getmyphotos
 
 // 또 다른 user 기능이 뭐가 있을까
 
