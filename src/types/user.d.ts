@@ -7,7 +7,7 @@ export interface existingUser {
     //sex: string,
     //mail: string,
     //ph: string,
-    sArr: Array<string>,
+    //sArr: Array<string>,
     intro: string,
 }
 

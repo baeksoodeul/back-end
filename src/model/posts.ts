@@ -17,37 +17,37 @@ class Post extends BaseEntity {
     @PrimaryGeneratedColumn()
     p_id!: number;
 
-    @ManyToOne((type) => User, { onDelete: 'CASCADE', nullable: false })
+    @ManyToOne((type) => User, (user) => user.u_id, { onDelete: 'CASCADE', nullable: false })
     @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
-    @Column({ comment: '제목' })
+    @Column('varchar', { comment: '제목' })
     title!: string;
 
-    @Column({ comment: '내용' })
+    @Column('varchar', { comment: '내용' })
     content!: string;
 
-    @Column({ default: 0, comment: '조회수' })
+    @Column('int', { default: 0, comment: '조회수' })
     lookUp!: number;
 
-    @Column({ default: 0, comment: '추천수' })
+    @Column('int', { default: 0, comment: '추천수' })
     recommendation!: number;
 
     //이미지, site, tag들을 어떻게 처리해야할 지 생각해봐야함.
-    @Column()
+    /*@Column('string[]')
     site!: string[];
 
     @Column()
-    tag!: string[];
+    tag!: string[];*/
 
     //얘를 isdeleted로 넘길까
-    @Column({ default: true })
+    @Column('boolean', { default: true })
     enabled!: boolean;
 
-    @Column({ comment: '작성일자' })
+    @Column('varchar', { comment: '작성일자' })
     writtenDate!: string;
 
-    @Column({ nullable: true })
+    @Column('varchar', { nullable: true })
     updatedDate!: string | null;
 
     @BeforeInsert()

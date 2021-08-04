@@ -106,8 +106,8 @@ export const findPostByText = async (data: searchPostData) => {
                 'post.lookUp',
                 'post.recommendation',
                 'post.writtenDate',
-                'post.site',
-                'post.tag',
+                /*'post.site',
+                'post.tag',*/
                 'user.u_id',
                 'user.nickName'
             ])

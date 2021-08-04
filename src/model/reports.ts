@@ -23,35 +23,35 @@ class Report extends BaseEntity {
     r_id!: number;
 
     //신고자
-    @ManyToOne((type) => User)
+    @ManyToOne((type) => User, (user) => user.u_id)
     @JoinColumn({ name: 'u_id', referencedColumnName: 'u_id' })
     user!: User;
 
     //foreign key도 null일 수 있다
-    @ManyToOne((type) => Post, { nullable: true })
+    @ManyToOne((type) => Post, (post) => post.p_id, { nullable: true })
     @JoinColumn({ name: 'p_id', referencedColumnName: 'p_id' })
     post!: Post;
 
-    @ManyToOne((type) => Comment, { nullable: true })
+    @ManyToOne((type) => Comment, (comment) => comment.c_id, { nullable: true })
     @JoinColumn({ name: 'c_id', referencedColumnName: 'c_id' })
     comment!: Comment;
 
-    @Column()
+    @Column('varchar')
     category!: string;
 
-    @Column()
+    @Column('varchar')
     reason!: string;
 
     //신고에 대한 처벌 여부
-    @Column({ default: false })
+    @Column('boolean', { default: false })
     infliction!: boolean;
 
     //신고에 대한 답변도 필요할까?
 
-    @Column()
+    @Column('varchar')
     reportedDate!: string;
 
-    @Column({ nullable: true })
+    @Column('varchar', { nullable: true })
     managedDate!: string | null;
 
     @BeforeInsert()

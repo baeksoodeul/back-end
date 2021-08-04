@@ -116,7 +116,7 @@ export const getMyPhotos = async (decoded: JwtPayload | undefined) => {
 // 아이디, 닉네임 중복 검사를 만들면 되지 않을까...
 // 회원가입, 해당 계정이 있는지부터 체크해야함.
 export const insertUser = async (user: newUser) => {
-    const { userId, pwd, salt, nick, fName, lName, sArr, intro }: newUser = user;
+    const { userId, pwd, salt, nick, fName, lName, /*sArr,*/ intro }: newUser = user;
 
     try {
         const iUser: InsertResult = await User.createQueryBuilder()
@@ -133,7 +133,7 @@ export const insertUser = async (user: newUser) => {
                 // sex: sex,
                 // email: mail,
                 // phone: ph,
-                sites: sArr,
+                //sites: sArr,
                 introduction: intro
             })
             .execute();
@@ -148,7 +148,7 @@ export const insertUser = async (user: newUser) => {
 // 해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?
 export const updateUser = async (data: number, user: existingUser) => {
     const userId: number = data;
-    const { pwd, nick, fName, lName, /* age, sex, mail, ph, */ sArr, intro }: existingUser = user;
+    const { pwd, nick, fName, lName, /* age, sex, mail, ph, sArr,*/ intro }: existingUser = user;
 
     try {
         const uUser: UpdateResult = await User.createQueryBuilder()
@@ -162,7 +162,7 @@ export const updateUser = async (data: number, user: existingUser) => {
                 // sex: sex,
                 // email: mail,
                 // phone: ph,
-                sites: sArr,
+                //.sites: sArr,
                 introduction: intro
             })
             .where('user.u_id = :id', { id: userId })
