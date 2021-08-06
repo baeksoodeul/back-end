@@ -9,6 +9,15 @@ import { findUserByToken } from '../service/userService';
 import { fileType, newPost } from '../types/post';
 import Post from '../model/posts';
 
+/**
+ * POST /api/post/write
+ * @summary write new post
+ * @tag Post
+ * @param req
+ * @param res
+ * @returns
+ * @returns {Error} -error
+ */
 //insert result로 결과를 확인하기 힘들면, insert나 delete후 find로 찾아줘야 한다.
 //req.decoded에는 u_id와 username이 들어있다
 //image, tag, site 생각해줘야 한다.
@@ -62,6 +71,13 @@ export const writePost: RequestHandler = async (req: any, res, next) => {
     }
 };
 
+/**
+ * POST /api/post/{postId}/edit => 이게 되나
+ * @param req
+ * @param res
+ * @param next
+ * @returns
+ */
 //수정완료 버튼 => multer가 실행된 이후이다.
 export const editPost: RequestHandler = async (req: any, res, next) => {
     const tokenData: JwtPayload | undefined = req.decoded;
@@ -152,16 +168,16 @@ export const removePost: RequestHandler = async (req: any, res, next) => {
     }
 };
 
+/**
+ * GET /api/board/posts
+ * @summary get list of post
+ * @tag Board
+ * @returns {Array<Post>} 200 - Success response - application/json
+ * @returns {Error} - database error
+ */
 export const postListing: RequestHandler = async (req, res, next) => {
     try {
         const posts = await getPostList();
-        if (!posts) {
-            return res.status(600).json({
-                success: true,
-                message: '게시글이 없음',
-                data: posts
-            });
-        }
 
         return res.status(201).json({
             success: true,

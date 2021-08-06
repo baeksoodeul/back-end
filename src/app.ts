@@ -4,24 +4,24 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
-import { logger, loggerStream } from './lib/logger';
+import { loggerStream } from './lib/logger';
 import errorHandler from './lib/errorHandler';
 import 'reflect-metadata';
 import './env';
 import router from './routes';
 
-const { NODE_ENV, DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT } = process.env;
+//const { NODE_ENV, DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT } = process.env;
 
 const connectOptions: ConnectionOptions = {
     type: 'mysql',
-    host: DB_HOST, // "localhost",
-    port: parseInt(DB_PORT as string, 10), // 3306,
-    username: DB_USER, // "test",
-    password: DB_PASSWORD, // "test",
-    database: DB_NAME, // "test",
+    host: 'localhost', // DB_HOST,
+    port: 3306, // parseInt(DB_PORT as string, 10),
+    username: 'test', // DB_USER,
+    password: 'test', // DB_PASSWORD,
+    database: 'test', // DB_NAME,
     synchronize: true,
     logging: true,
-    entities: ['./schema/*.ts']
+    entities: [path.join(__dirname, '/model/*.ts')]
 };
 
 const dbInit = async () => {
@@ -33,8 +33,8 @@ const dbInit = async () => {
     }
 };
 
-const app: express.Application = express();
-const morganEnv = NODE_ENV !== 'production' ? 'dev' : 'combined';
+const app = express();
+const morganEnv = 'dev'; //NODE_ENV !== 'production' ? 'dev' : 'combined';
 
 app.set('port', 3000);
 app.use(cors()); // cors

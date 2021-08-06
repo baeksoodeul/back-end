@@ -51,7 +51,8 @@ export const userLogin: RequestHandler = async (req, res, next) => {
 //회원가입도 로그인 되어 있을때는 못하도록 막아야 하나... 이거는 얘기를 해봐야할듯
 export const userSignup: RequestHandler = async (req, res, next) => {
     try {
-        const { id, password, nickName, lastName, firstName, sites, introduction } = req.body.user;
+        const { id, password, nickName, lastName, firstName, /*sites,*/ introduction } =
+            req.body.user;
         // salt가 없는 상태 -> id, password, nickname, lastname, firstname, sites, introduction
         const cryption = (await createHashedPassword(password)) as sObject;
         const userData: newUser = {
@@ -61,7 +62,7 @@ export const userSignup: RequestHandler = async (req, res, next) => {
             nick: nickName,
             fName: firstName,
             lName: lastName,
-            sArr: sites,
+            //sArr: sites,
             intro: introduction
         };
 
