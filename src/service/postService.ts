@@ -12,7 +12,7 @@ import { dateFormatter } from '../lib/formatter';
 // 일단 게시글 정렬은 최신순으로
 // 함수를 여러개 쓸 필요가 있을까... 그냥 값을 받아와서 where문만 바꿔주면 되지않을까...
 //그냥 이거를 돌려쓰면 안되나. 흠?
-export const getPostList = async (): Promise<Post[] | undefined> => {
+export const selectPostAll = async () => {
     try {
         const postList = await Post.createQueryBuilder('post')
             .leftJoin('post.user', 'user')
@@ -22,13 +22,14 @@ export const getPostList = async (): Promise<Post[] | undefined> => {
 
         return postList;
     } catch (err) {
+        console.log('error - postService/selectPostAll');
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
 //이거좀 수정해야할듯
-export const getPostDetail = async (data: number): Promise<Post | undefined> => {
+export const selectDetailedPostById = async (data: number) => {
     const postId: number = data;
 
     try {
@@ -38,12 +39,11 @@ export const getPostDetail = async (data: number): Promise<Post | undefined> => 
             .where('post.p_id = :id', { id: postId })
             .getOne();
 
-        if (!postDetail) throw new Error('NOT_FOUND');
-
         return postDetail;
     } catch (err) {
+        err.message = 'error - postService/selectDetatiledPostById';
         console.log(err);
-        throw new err();
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -144,8 +144,9 @@ export const insertPost = async (post: newPost) => {
         //console.log(iPost);
         return fPost;
     } catch (err) {
+        err.message = 'error - postService/insertPost';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -170,8 +171,9 @@ export const updatePost = async (data: number, param: string, ctnt: string) => {
         //console.log(iPost);
         return fPost;
     } catch (err) {
+        err.message = 'error - updatePost';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -187,8 +189,9 @@ export const deletePost = async (data: number) => {
 
         return dPsot;
     } catch (err) {
+        err.message = 'error - postService/deletePost';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -204,8 +207,9 @@ export const getFiles = async (postId: number) => {
 
         return files;
     } catch (err) {
+        err.message = 'error - postService/getFiles';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -237,8 +241,9 @@ export const insertFiles = async (user: User | undefined, post: Post | undefined
         return iFiles;
         
     } catch(err) {
+        err.message = 'error - postService/insertFiles'
         console.log(err);
-        throw err;
+        throw new Error('DATABSE_ERROR');
     }
 };
 
@@ -259,8 +264,9 @@ export const deleteFiles = async (fileIds: number[]) => {
 
         return uFiles;
     } catch (err) {
+        err.message = 'error - postService/deleteFiles';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };
 
@@ -279,7 +285,8 @@ export const deleteFilesWhileEditingPost = async (postId: number) => {
 
         return dFiles;
     } catch (err) {
+        err.message = 'error - postService//delteFilesWhileEditingPost';
         console.log(err);
-        throw err;
+        throw new Error('DATABASE_ERROR');
     }
 };

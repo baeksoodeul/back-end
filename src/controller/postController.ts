@@ -4,7 +4,7 @@ import fs from 'fs';
 import { JwtPayload } from 'jsonwebtoken';
 import User from '../model/users';
 // prettier-ignore
-import {insertPost, updatePost, deletePost, getPostDetail, getPostList, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, /*findPostById*/} from '../service/postService';
+import {insertPost, updatePost, deletePost, selectDetailedPostById, selectPostAll, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, /*findPostById*/} from '../service/postService';
 import { findUserByToken } from '../service/userService';
 import { fileType, newPost } from '../types/post';
 import Post from '../model/posts';
@@ -175,9 +175,9 @@ export const removePost: RequestHandler = async (req: any, res, next) => {
  * @returns {Array<Post>} 200 - Success response - application/json
  * @returns {Error} - database error
  */
-export const postListing: RequestHandler = async (req, res, next) => {
+export const getPostList: RequestHandler = async (req, res, next) => {
     try {
-        const posts = await getPostList();
+        const posts = await selectPostAll();
 
         return res.status(201).json({
             success: true,
@@ -185,6 +185,41 @@ export const postListing: RequestHandler = async (req, res, next) => {
             data: posts
         });
     } catch (err) {
+        //서비스에서 에러가 난다면 -> DATABASE_ERROR라는 에러가 바로 에러 핸들러로 갈것.
+        next(err);
+    }
+};
+
+/**
+ * GET /api/post/:postId/detail
+ * @summary get detail content of post
+ * @tag Post
+ * @param {number}
+ * @returns {Post} 20X -success response
+ * @returns {Error} 40X - Invalid Parameter
+ * returns {Error} 500 - database error
+ */
+export const getPostDetail: RequestHandler = async (req, res, next) => {
+    //패러미터 에러가 생길수도 있음 여기서.
+    const value: number = parseInt(req.params.postId, 10);
+
+    //service function으로 넘길때, 인자를 검사하고 넘겨주는게 맞는것 같다... => 인자로 인한 오류는 여기서 잡고 감.
+    //service에서 생기는 error는 데이터베이스 에러밖에 없다!
+    try {
+        const post = await selectDetailedPostById(value);
+
+        if(!post) {
+            throw new Error('NOT_FOUND');
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: '조회 성공',
+            data: post
+        });
+    } catch (err) {
+        //서비스에서 에러가 생긴다면 DATABASE_ERROR가 next로 바로 넘어감.
+        //그게 아닌데 에러가 나온다면 다른 에러가 넘어갈것.
         next(err);
     }
 };

@@ -47,10 +47,17 @@ export const userLogin: RequestHandler = async (req, res, next) => {
     }
 };
 
+/**
+ *
+ * @param req
+ * @param res
+ * @returns {JSON}
+ */
 // 회원가입
 //회원가입도 로그인 되어 있을때는 못하도록 막아야 하나... 이거는 얘기를 해봐야할듯
 export const userSignup: RequestHandler = async (req, res, next) => {
     try {
+        //패러미터 검증 해주면 될듯함.
         const { id, password, nickName, lastName, firstName, /*sites,*/ introduction } =
             req.body.user;
         // salt가 없는 상태 -> id, password, nickname, lastname, firstname, sites, introduction
@@ -67,18 +74,16 @@ export const userSignup: RequestHandler = async (req, res, next) => {
         };
 
         const user = await insertUser(userData);
-        //console에 찍히는거 보면서 확인해봐야 알것 같음... ㅇㅇ; 성공했을때 결과물 알면 될듯?
-        //!user는 아닐것 같고 대충 !user.generatedMaps.id .... 이런식으로 가야할듯
+
+        //딱히 실행은 안됨. 어차피 디비 에러는 서비스에서 잡아주기 때문에 크게 없을듯.
         if (!user) {
-            return res.status(600).json({
-                success: false,
-                message: '회원가입 실패'
-            });
+            throw new Error('INTERNAL_SERVER_ERROR');
         }
 
         return res.status(201).json({
             success: true,
-            message: '회원가입 성공'
+            message: '회원가입 성공',
+            data: user
         });
     } catch (err) {
         next(err);

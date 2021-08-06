@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import path from 'path';
-import { loggerStream } from './lib/logger';
+import { logger, loggerStream } from './lib/logger';
 import errorHandler from './lib/errorHandler';
 import 'reflect-metadata';
 import './env';
@@ -29,7 +29,7 @@ const dbInit = async () => {
         await createConnection(connectOptions);
         console.log('DB connected');
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
