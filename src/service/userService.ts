@@ -141,8 +141,8 @@ export const insertUser = async (user: newUser) => {
         //console.log(iUser);
         return iUser;
     } catch (err) {
-        console.log(err);
-        throw err();
+        console.log('error - userService/insertUser');
+        throw new Error('DATABASE_ERROR');
     }
 };
 // 해당 계정이 있는지부터 체크해야함. => 근데 사실 update는 로그인 되어있는 상태에서 하기 때문에 auth로 넘기면 될듯?
@@ -170,8 +170,8 @@ export const updateUser = async (data: number, user: existingUser) => {
 
         return uUser;
     } catch (err) {
-        // console.error(err);
-        // throw new err;
+        console.log('error - userService/updateUser');
+        throw new Error('DATABASE_ERROR');
     }
 };
 
