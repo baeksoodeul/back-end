@@ -4,7 +4,7 @@ import fs from 'fs';
 import { JwtPayload } from 'jsonwebtoken';
 import User from '../model/users';
 // prettier-ignore
-import {insertPost, updatePost, deletePost, selectDetailedPostById, selectPostAll, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, raiseLookup, /*findPostById*/} from '../service/postService';
+import {insertPost, updatePost, deletePost, selectPostById, selectPostAll, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, raiseNum, /*findPostById*/} from '../service/postService';
 import { findUserByToken } from '../service/userService';
 import { fileType, newPost } from '../types/post';
 import Post from '../model/posts';
@@ -169,10 +169,11 @@ export const editPost: RequestHandler = async (req: any, res, next) => {
 export const removePost: RequestHandler = async (req: any, res, next) => {
     const tokenData: JwtPayload | undefined = req.decoded;
     const nArray: Array<number> = [];
+    const id: number = req.params.postId;
 
     try {
         //삭제할 게시물이 있는 지 확인.
-        const fpost = await selectDetailedPostById(req.params.postId);
+        const fpost = await selectPostById(req.params.postId);
         if (!fpost) {
             throw new Error('NOT_FOUND');
         }
@@ -239,14 +240,14 @@ export const getPostList: RequestHandler = async (req, res, next) => {
  */
 export const getPostDetail: RequestHandler = async (req: any, res, next) => {
     //패러미터 에러가 생길수도 있음 여기서.
-    const value: number = parseInt(req.params.postId, 10);
-    const cnt: number = parseInt(req.lookup, 10);
+    const value: number = req.params.postId;
+    const cnt: number = req.lookup;
 
     //service function으로 넘길때, 인자를 검사하고 넘겨주는게 맞는것 같다... => 인자로 인한 오류는 여기서 잡고 감.
     //service에서 생기는 error는 데이터베이스 에러밖에 없다!
     try {
-        const uPost = await raiseLookup(value, cnt);
-        const post = await selectDetailedPostById(value);
+        const raise = await raiseNum(value, 'lookUp');
+        const post = await selectPostById(value);
 
         if (!post) {
             throw new Error('NOT_FOUND');
@@ -262,6 +263,33 @@ export const getPostDetail: RequestHandler = async (req: any, res, next) => {
     } catch (err) {
         //서비스에서 에러가 생긴다면 DATABASE_ERROR가 next로 바로 넘어감.
         //그게 아닌데 에러가 나온다면 다른 에러가 넘어갈것.
+        next(err);
+    }
+};
+
+/**
+ * GET /api/post/:postId/recommend
+ * @summary raise the recommendation of post
+ * @tag Post
+ * @param {number}
+ * @return {number} 20X - success response
+ * @returns {Error} 40X - Invalid Parameter
+ * returns {Error} 50x - database Error
+ */
+export const recommendPost: RequestHandler = async (req: any, res, next) => {
+    const value: number = req.params.postId;
+    const cnt: number = req.rcmd;
+
+    try {
+        const raise = await raiseNum(value, 'recommendation');
+        //
+
+        return res.status(201).json({
+            success: true,
+            message: '추천',
+            data: cnt + 1
+        });
+    } catch (err) {
         next(err);
     }
 };
