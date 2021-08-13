@@ -123,6 +123,23 @@ export const findPostByText = async (data: searchPostData) => {
     }
 };
 
+export const raiseLookup = async (id: number, cnt: number) => {
+    const postId = id;
+    try {
+        const uPost = await Post.createQueryBuilder()
+            .update(Post)
+            .set({
+                lookUp: cnt + 1
+            })
+            .where('post.p_id = :id', { id: postId })
+            .execute();
+    } catch (err) {
+        err.message = 'error-postService/raiseLookup';
+        console.log(err);
+        //throw new Error();
+    }
+};
+
 export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
@@ -181,13 +198,13 @@ export const deletePost = async (data: number) => {
     const postId: number = data;
 
     try {
-        const dPsot: DeleteResult = await Post.createQueryBuilder()
+        const dPost: DeleteResult = await Post.createQueryBuilder()
             .delete()
             .from(Post)
             .where('post.p_id = :id', { id: postId })
             .execute();
 
-        return dPsot;
+        return dPost;
     } catch (err) {
         err.message = 'error - postService/deletePost';
         console.log(err);

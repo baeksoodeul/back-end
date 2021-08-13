@@ -52,10 +52,10 @@ class File extends BaseEntity {
     @Column('varchar', { default: null, comment: '삭제 날짜', nullable: true })
     deletedDate!: string;
 
-    @BeforeInsert()
-    setUploadedDate(): void {
-        this.uploadedDate = dateFormatter(new Date());
-    }
+    // @BeforeInsert()
+    // setUploadedDate(): void {
+    //     this.uploadedDate = dateFormatter(new Date());
+    // }
 }
 
 export default File;

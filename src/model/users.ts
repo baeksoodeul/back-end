@@ -57,10 +57,10 @@ class User extends BaseEntity {
     @Column('varchar', { default: null, comment: '가입일자' })
     joinedDate!: string;
 
-    @BeforeInsert()
-    setCreatedDate() {
-        this.joinedDate = dateFormatter(new Date());
-    }
+    // @BeforeInsert()
+    // setCreatedDate() {
+    //     this.joinedDate = dateFormatter(new Date());
+    // }
 }
 
 export default User;

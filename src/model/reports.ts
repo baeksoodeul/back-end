@@ -54,11 +54,11 @@ class Report extends BaseEntity {
     @Column('varchar', { nullable: true })
     managedDate!: string | null;
 
-    @BeforeInsert()
-    setReportedDate() {
-        this.reportedDate = dateFormatter(new Date());
-        this.managedDate = null;
-    }
+    // @BeforeInsert()
+    // setReportedDate() {
+    //     this.reportedDate = dateFormatter(new Date());
+    //     this.managedDate = null;
+    // }
 }
 
 export default Report;

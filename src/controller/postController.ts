@@ -4,10 +4,12 @@ import fs from 'fs';
 import { JwtPayload } from 'jsonwebtoken';
 import User from '../model/users';
 // prettier-ignore
-import {insertPost, updatePost, deletePost, selectDetailedPostById, selectPostAll, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, /*findPostById*/} from '../service/postService';
+import {insertPost, updatePost, deletePost, selectDetailedPostById, selectPostAll, insertFiles, getFiles, deleteFilesWhileEditingPost, deleteFiles, raiseLookup, /*findPostById*/} from '../service/postService';
 import { findUserByToken } from '../service/userService';
 import { fileType, newPost } from '../types/post';
 import Post from '../model/posts';
+
+//포스팅 등록, 포스팅 수정, 포스팅 삭제, 포스팅 목록, 포스팅 detail
 
 /**
  * POST /api/post/write
@@ -58,12 +60,11 @@ export const writePost: RequestHandler = async (req: any, res, next) => {
         return res.status(200).json({
             success: true,
             message: '포스팅 등록 성공',
-            user: userInfo.u_id,
-            post: {
-                id: wPost.p_id,
-                title: wPost.title
+            data: {
+                u_id: userInfo.u_id,
+                p_id: wPost.p_id,
+                files: req.files
             },
-            files: req.files,
             createdAt: Date.now()
         });
     } catch (err) {
@@ -145,23 +146,60 @@ export const editPost: RequestHandler = async (req: any, res, next) => {
         return res.status(200).json({
             success: true,
             message: '포스팅 수정 성공',
-            user: userInfo.u_id,
-            post: {
-                id: ePost.p_id,
-                title: ePost.title
-            },
-            files: req.files,
-            updatedAt: Date.now()
+            data: {
+                u_id: userInfo.u_id,
+                p_id: ePost.p_id,
+                files: req.files,
+                updatedAt: Date.now()
+            }
         });
     } catch (err) {
         next(err);
     }
 };
 
+/**
+ * DELETE /api/post/delete/:postId
+ * @summary delete the post
+ * @tag Post
+ * @param req
+ * @param res
+ * @return {Error} 40x
+ */
 export const removePost: RequestHandler = async (req: any, res, next) => {
     const tokenData: JwtPayload | undefined = req.decoded;
+    const nArray: Array<number> = [];
 
     try {
+        //삭제할 게시물이 있는 지 확인.
+        const fpost = await selectDetailedPostById(req.params.postId);
+        if (!fpost) {
+            throw new Error('NOT_FOUND');
+        }
+        //삭제할 파일이 있는지 확인.
+        const files = await getFiles(req.params.postId);
+        if (files.length !== 0) {
+            files.map(async (file, index) => {
+                nArray[index] = file.f_id;
+            });
+
+            const rFile = await deleteFiles(nArray); //파일 isdelete처리
+        }
+        const rPost = await deletePost(req.params.postId); //post isdelete처리
+        //파일이랑 포스트 삭제된거 확인해줘야할 필요가 있음. 그냥 반환형을 없애버릴까... 삭제할때
+        if (!rPost) {
+            throw new Error();
+        }
+
+        return res.status(205).json({
+            success: true,
+            message: '포스팅 삭제 성공',
+            data: {
+                p_id: req.params.postId,
+                f_id: nArray
+            },
+            deltedAt: Date.now()
+        });
         //auth를 거치고 오는 함수. 마지막으로 확인문구 같은거만 받으면 될듯.
     } catch (err) {
         next(err);
@@ -199,17 +237,21 @@ export const getPostList: RequestHandler = async (req, res, next) => {
  * @returns {Error} 40X - Invalid Parameter
  * returns {Error} 500 - database error
  */
-export const getPostDetail: RequestHandler = async (req, res, next) => {
+export const getPostDetail: RequestHandler = async (req: any, res, next) => {
     //패러미터 에러가 생길수도 있음 여기서.
     const value: number = parseInt(req.params.postId, 10);
+    const cnt: number = parseInt(req.lookup, 10);
 
     //service function으로 넘길때, 인자를 검사하고 넘겨주는게 맞는것 같다... => 인자로 인한 오류는 여기서 잡고 감.
     //service에서 생기는 error는 데이터베이스 에러밖에 없다!
     try {
+        const uPost = await raiseLookup(value, cnt);
         const post = await selectDetailedPostById(value);
 
-        if(!post) {
+        if (!post) {
             throw new Error('NOT_FOUND');
+        } else if (post.lookUp !== cnt + 1) {
+            throw new Error('NOT_UPDATED'); // => internal server error
         }
 
         return res.status(201).json({

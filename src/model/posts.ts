@@ -56,10 +56,10 @@ class Post extends BaseEntity {
         this.updatedDate = null;
     }
 
-    @BeforeUpdate()
-    setUpdatedDate() {
-        this.updatedDate = dateFormatter(new Date());
-    }
+    // @BeforeUpdate()
+    // setUpdatedDate() {
+    //     this.updatedDate = dateFormatter(new Date());
+    // }
 }
 
 export default Post;
