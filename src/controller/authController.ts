@@ -32,13 +32,13 @@ export const userLogin: RequestHandler = async (req, res, next) => {
             });
         }
 
-        if (!comparePassword(req.body.password, userData?.salt, userData?.password)) {
+        if (!comparePassword(req.body.password, userData.salt, userData.password)) {
             return res.json({
                 // 비밀번호 오류
             });
         }
         // 성공, 토큰 생성이 필요
-        const token = await generateToken(userData?.u_id, userData?.userName);
+        const token = await generateToken(userData.u_id, userData.userName);
 
         // 어드민인지 확인해봐야함.
         return res.cookie('x_auth', token).status(200).json({});

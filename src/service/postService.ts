@@ -29,7 +29,7 @@ export const selectPostAll = async () => {
 };
 
 //이거좀 수정해야할듯
-export const selectDetailedPostById = async (data: number) => {
+export const selectPostById = async (data: number) => {
     const postId: number = data;
 
     try {
@@ -123,6 +123,33 @@ export const findPostByText = async (data: searchPostData) => {
     }
 };
 
+export const raiseNum = async (id: number, type: string) => {
+    const postId = id;
+    const isType = type === 'lookUp';
+
+    //해보고 안되면 그때가서 수정
+    const obj = isType
+        ? { lookUp: () => 'lookUp + 1' /*, recommendation: () => 'recommendation'*/ }
+        : { recommendation: () => 'recommendation + 1' /*, lookUp: () => 'lookUp'*/ };
+    // let obj = {};
+    // if (type === 'lookUp') {
+    //     obj = { lookUp: () => 'lookUp + 1' };
+    // } else {
+    //     obj = { recommendation: () => 'recommendation + 1' };
+    // }
+    try {
+        const uPost = await Post.createQueryBuilder()
+            .update(Post)
+            .set(obj)
+            .where('post.p_id = :id', { id: postId })
+            .execute();
+    } catch (err) {
+        err.message = 'error-postService/raiseLookup';
+        console.log(err);
+        throw new Error('DATABASE_ERROR');
+    }
+};
+
 export const insertPost = async (post: newPost) => {
     const { user, title, ctnt }: newPost = post;
     try {
@@ -181,13 +208,13 @@ export const deletePost = async (data: number) => {
     const postId: number = data;
 
     try {
-        const dPsot: DeleteResult = await Post.createQueryBuilder()
+        const dPost: DeleteResult = await Post.createQueryBuilder()
             .delete()
             .from(Post)
             .where('post.p_id = :id', { id: postId })
             .execute();
 
-        return dPsot;
+        return dPost;
     } catch (err) {
         err.message = 'error - postService/deletePost';
         console.log(err);
