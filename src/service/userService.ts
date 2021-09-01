@@ -192,3 +192,13 @@ export const deleteUser = async (data: number): Promise<DeleteResult | undefined
         // throw new err;
     }
 };
+
+export const getMyCmts = async (decoded: JwtPayload | undefined ) => {
+    const tokenData: JwtPayload = decoded as JwtPayload;
+
+    try {
+        const comments: Comment[] = await Comment.createQueryBuilder('comment')
+        .
+
+    }
+}
