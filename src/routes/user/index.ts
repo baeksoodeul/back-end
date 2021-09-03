@@ -16,6 +16,8 @@ router.use('/auth', Auth);
 router.get('/mypage', auth); //getmypage
 router.get('/myphotos', auth); //getmyphotos
 
+//router.get('/mycomments', auth); ? 이렇게 해야함?
+
 // 또 다른 user 기능이 뭐가 있을까
 
 // getUserList는 권한을 줘야하지 않을까

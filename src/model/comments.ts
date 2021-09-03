@@ -29,6 +29,9 @@ class Comment extends BaseEntity {
     @Column('int', { comment: '추천수' })
     recommendation!: number;
 
+    @Column('varchar', { comment : '내용'})
+    content! : string;
+
     //답글 기능
 
     @Column('boolean', { default: true })
@@ -39,7 +42,11 @@ class Comment extends BaseEntity {
 
     @Column('varchar')
     updatedDate!: string | null;
+    
 
+
+    
+    /*
     @BeforeInsert()
     setWrittenDate(): void {
         this.writtenDate = dateFormatter(new Date());
@@ -49,7 +56,7 @@ class Comment extends BaseEntity {
     @BeforeUpdate()
     setUpdatedDate(): void {
         this.updatedDate = dateFormatter(new Date());
-    }
+    }*/
 }
 
 export default Comment;
