@@ -192,3 +192,22 @@ export const deleteUser = async (data: number): Promise<DeleteResult | undefined
         // throw new err;
     }
 };
+
+export const getMyComments = async (decoded: JwtPayload | undefined ) => {
+    const tokenData: JwtPayload = decoded as JwtPayload;
+
+    try {
+        const comments: Comment[] = await Comment.createQueryBuilder('comment')
+        .leftjoin('comment.user', 'user')
+        .leftjoin('comment.post', 'post')
+        .select(['post.p_id', 'comment.c_id', 'user.u_id'])
+        .where('user.u_id = :id', {id: tokenData.u_id})
+        .orderBy('comment.writtenDate', 'DESC')
+        .getMany();
+
+        return comments;
+    } catch (err) {
+        console.log(err);
+        throw new err();
+    }
+};
